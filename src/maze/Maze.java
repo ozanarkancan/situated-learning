@@ -7,6 +7,8 @@ public class Maze {
 	private int width;
 	
 	private Cell[][] maze;
+	private Cell start;
+	private Cell destination;
 	
 	public Maze(int h, int w){
 		this.height = h;
@@ -83,10 +85,70 @@ public class Maze {
 				else
 					System.out.print(' ');
 				
-				if(!walls[1].isCarved())
-					System.out.print('_');
+				if(!walls[1].isCarved()){
+					if(i == start.getRow() && j == start.getColumn())
+						System.out.print("Z");
+					else if(i == destination.getRow() && j == destination.getColumn())
+						System.out.print("2");
+					else
+						System.out.print('_');
+				}
+				else{
+					if(i == start.getRow() && j == start.getColumn())
+						System.out.print('S');
+					else if(i == destination.getRow() && j == destination.getColumn())
+						System.out.print('D');
+					else
+						System.out.print(' ');
+				}
+				
+				if(j == width - 1)
+					System.out.print('|');
+			}
+			System.out.println();
+		}
+	}
+	
+	public void display(ArrayList<Cell> path){
+		for(int i = 0; i < width * 2 + 1; i++){
+			if(i % 2 != 0)
+				System.out.print('_');
+			else
+				System.out.print(' ');
+		}
+		
+		System.out.println();
+		
+		for(int i = 0; i < height; i++){
+			for(int j = 0; j < width; j++){
+				Wall[] walls = maze[i][j].getWalls();
+				Cell c = maze[i][j];
+				
+				if(!walls[2].isCarved())
+					System.out.print('|');
 				else
 					System.out.print(' ');
+				
+				if(!walls[1].isCarved()){
+					if(i == start.getRow() && j == start.getColumn())
+						System.out.print("Z");
+					else if(i == destination.getRow() && j == destination.getColumn())
+						System.out.print("2");
+					else if(path.contains(c))
+						System.out.print('o');
+					else
+						System.out.print('_');
+				}
+				else{
+					if(i == start.getRow() && j == start.getColumn())
+						System.out.print('S');
+					else if(i == destination.getRow() && j == destination.getColumn())
+						System.out.print('D');
+					else if(path.contains(c))
+						System.out.print('o');
+					else
+						System.out.print(' ');
+				}
 				
 				if(j == width - 1)
 					System.out.print('|');
@@ -98,6 +160,22 @@ public class Maze {
 	public static void main(String[] args){
 		Maze maze = new Maze(5, 5);
 		maze.display();
+	}
+
+	public Cell getStart() {
+		return start;
+	}
+
+	public void setStart(Cell start) {
+		this.start = start;
+	}
+
+	public Cell getDestination() {
+		return destination;
+	}
+
+	public void setDestination(Cell destination) {
+		this.destination = destination;
 	}
 
 }

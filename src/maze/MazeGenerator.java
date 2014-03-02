@@ -8,7 +8,6 @@ public class MazeGenerator {
 	
 	public static MazeGenerator instance = null;
 	
-	private int numberOfVisitedCells = 0;
 	private int height = 0;
 	private int width = 0;
 	private Stack<Cell> cellStack;
@@ -26,7 +25,6 @@ public class MazeGenerator {
 	public Maze getRandomMaze(int height, int width){
 		this.height = height;
 		this.width = width;
-		numberOfVisitedCells = 1;
 		cellStack = new Stack<Cell>();
 		
 		Maze maze = new Maze(height, width);
@@ -39,8 +37,22 @@ public class MazeGenerator {
 		notVisitedCells.remove(initialCell);
 		
 		recursiveBacktracker(maze, initialCell);
+		defineRandomStartAndDestination(maze);
 		
 		return maze;
+	}
+	
+	private void defineRandomStartAndDestination(Maze maze){
+		Cell start = maze.getCell(nextInt(height), nextInt(width));
+		maze.setStart(start);
+		
+		Cell destination = null;
+		
+		do{
+			destination = maze.getCell(nextInt(height), nextInt(width));
+		}while(start == destination || start.euclideanDistance(destination) < 6);
+		
+		maze.setDestination(destination);
 	}
 	
 	private void recursiveBacktracker(Maze maze, Cell currentCell){
@@ -78,7 +90,7 @@ public class MazeGenerator {
 	}
 	
 	public static void main(String[] args){
-		Maze maze = MazeGenerator.getInstance().getRandomMaze(50, 50);
+		Maze maze = MazeGenerator.getInstance().getRandomMaze(10, 10);
 		maze.display();
 	}
 

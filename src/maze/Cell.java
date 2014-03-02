@@ -84,4 +84,9 @@ public class Cell {
 		
 		return notVisitedNeighbours;
 	}
+	
+	public double euclideanDistance(Cell rhs){
+		return Math.sqrt(Math.pow(row - rhs.getRow(), 2) + 
+				Math.pow(column - rhs.getColumn(), 2));
+	}
 }
