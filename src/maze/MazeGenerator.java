@@ -88,10 +88,4 @@ public class MazeGenerator {
 		Random rand = new Random();
 		return rand.nextInt(upperBound);
 	}
-	
-	public static void main(String[] args){
-		Maze maze = MazeGenerator.getInstance().getRandomMaze(10, 10);
-		maze.display();
-	}
-
 }
