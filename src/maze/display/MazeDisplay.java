@@ -35,7 +35,7 @@ public class MazeDisplay extends JPanel{
 					g.setColor(Color.BLUE);
 					g.fillRect(j * 30, i * 30, 30, 30);
 					g.setColor(Color.BLACK);
-				}else if(solution.contains(current)){
+				}else if(solution != null && solution.contains(current)){
 					g.setColor(Color.CYAN);
 					g.fillRect(j * 30, i * 30, 30, 30);
 					g.setColor(Color.BLACK);

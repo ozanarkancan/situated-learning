@@ -10,9 +10,10 @@ import maze.display.MazeDisplayer;
 public class MazeDisplayerTest {
 
 	public static void main(String[] args) {
-		Maze maze = MazeGenerator.getInstance().getRandomMaze(12, 12);
+		Maze maze = MazeGenerator.getInstance().getRandomMaze(20, 20);
 		ArrayList<Cell> path = MazeSolver.getInstance().solveAStar(maze);
 		
+		MazeDisplayer.display(maze, null);
 		MazeDisplayer.display(maze, path);
 
 	}
