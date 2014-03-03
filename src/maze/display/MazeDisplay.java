@@ -36,7 +36,7 @@ public class MazeDisplay extends JPanel{
 					g.fillRect(j * 30, i * 30, 30, 30);
 					g.setColor(Color.BLACK);
 				}else if(solution.contains(current)){
-					g.setColor(Color.cyan);
+					g.setColor(Color.CYAN);
 					g.fillRect(j * 30, i * 30, 30, 30);
 					g.setColor(Color.BLACK);
 				}
@@ -49,11 +49,13 @@ public class MazeDisplay extends JPanel{
 				if(!upperWall.isCarved())
 					g.fillRect(upperWall.getTarget().getColumn() * 30, upperWall.getTarget().getRow() * 30, 30, 5);
 				
-				if(i == maze.getHeight() - 1)
-					g.fillRect(maze.getHeight() * 30 - 5, j * 30, 5, 30);
+				if(i == maze.getHeight() - 1){
+					Wall lowerWall = current.getWall(1);
+					g.fillRect(j * 30, maze.getHeight() * 30 - 5, 30, 5);
+				}
 				
 				if(j == maze.getWidth() - 1)
-					g.fillRect(i * 30, maze.getHeight() * 30 - 5, 30, 5);
+					g.fillRect(maze.getWidth() * 30 - 5, i * 30 - 5, 5, 30);
 				
 			}
 		}
