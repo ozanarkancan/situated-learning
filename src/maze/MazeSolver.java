@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.PriorityQueue;
 import java.util.Set;
-import java.util.TreeSet;
 
 public class MazeSolver {
 	private class Node implements Comparable<Node>{

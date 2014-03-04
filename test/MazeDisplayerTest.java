@@ -13,9 +13,8 @@ public class MazeDisplayerTest {
 		Maze maze = MazeGenerator.getInstance().getRandomMaze(20, 20);
 		ArrayList<Cell> path = MazeSolver.getInstance().solveAStar(maze);
 		
-		MazeDisplayer.display(maze, null);
+		//MazeDisplayer.display(maze, null);
 		MazeDisplayer.display(maze, path);
-
 	}
 
 }

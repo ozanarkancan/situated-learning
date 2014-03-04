@@ -50,7 +50,6 @@ public class MazeDisplay extends JPanel{
 					g.fillRect(upperWall.getTarget().getColumn() * 30, upperWall.getTarget().getRow() * 30, 30, 5);
 				
 				if(i == maze.getHeight() - 1){
-					Wall lowerWall = current.getWall(1);
 					g.fillRect(j * 30, maze.getHeight() * 30 - 5, 30, 5);
 				}
 				
