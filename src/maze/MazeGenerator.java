@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.Stack;
 
+import utils.Randomizer;
+
 public class MazeGenerator {
 	
 	public static MazeGenerator instance = null;
@@ -31,7 +33,7 @@ public class MazeGenerator {
 		
 		notVisitedCells = maze.getAllCells();
 		
-		Cell initialCell = maze.getCell(nextInt(height), nextInt(width));
+		Cell initialCell = maze.getCell(Randomizer.nextInt(height), Randomizer.nextInt(width));
 		initialCell.setVisited(true);
 		
 		notVisitedCells.remove(initialCell);
@@ -43,14 +45,14 @@ public class MazeGenerator {
 	}
 	
 	private void defineRandomStartAndDestination(Maze maze){
-		Cell start = maze.getCell(nextInt(height), nextInt(width));
+		Cell start = maze.getCell(Randomizer.nextInt(height), Randomizer.nextInt(width));
 		maze.setStart(start);
 		
 		Cell destination = null;
 		
 		do{
-			destination = maze.getCell(nextInt(height), nextInt(width));
-		}while(start == destination || start.euclideanDistance(destination) < 6);
+			destination = maze.getCell(Randomizer.nextInt(height), Randomizer.nextInt(width));
+		}while(start == destination || start.euclideanDistance(destination) < height / 3 + width / 3);
 		
 		maze.setDestination(destination);
 	}
@@ -61,7 +63,7 @@ public class MazeGenerator {
 			
 			if(notVisitedNeighbours.size() != 0){
 				int randomNeighbour = notVisitedNeighbours.get(
-						nextInt(notVisitedNeighbours.size()));
+						Randomizer.nextInt(notVisitedNeighbours.size()));
 				cellStack.push(currentCell);
 				Wall wall = currentCell.getWall(randomNeighbour);
 				wall.setCarved(true);
@@ -76,16 +78,11 @@ public class MazeGenerator {
 			}else{
 				if(notVisitedCells.size() != 0){
 					currentCell = notVisitedCells.get(
-							nextInt(notVisitedCells.size()));
+							Randomizer.nextInt(notVisitedCells.size()));
 					notVisitedCells.remove(currentCell);
 				}
 			}
 			
 		}
-	}
-	
-	private int nextInt(int upperBound){
-		Random rand = new Random();
-		return rand.nextInt(upperBound);
 	}
 }

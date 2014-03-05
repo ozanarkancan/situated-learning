@@ -16,6 +16,9 @@ public class ActionDetectorTest {
 		//testGetDirection();
 		//testGetDirectionError();
 		testStraightPaths();
+		//testCrossRoads();
+		//testCorners();
+		//testTurnDirections();
 	}
 	
 	public static void testGetDirection(){
@@ -47,7 +50,7 @@ public class ActionDetectorTest {
 	}
 	
 	public static void testStraightPaths(){
-		Maze maze = MazeGenerator.getInstance().getRandomMaze(20, 20);
+		Maze maze = MazeGenerator.getInstance().getRandomMaze(10, 10);
 		ArrayList<Cell> path = MazeSolver.getInstance().solveAStar(maze);
 		
 		MazeDisplayer.display(maze, path);
@@ -59,6 +62,38 @@ public class ActionDetectorTest {
 			System.out.println();
 		}
 		
+	}
+	
+	public static void testCrossRoads(){
+		Maze maze = MazeGenerator.getInstance().getRandomMaze(10, 10);
+		ArrayList<Cell> path = MazeSolver.getInstance().solveAStar(maze);
+		
+		MazeDisplayer.display(maze, path);
+		
+		for(int i = 0; i < path.size(); i++)
+			System.out.println(i + ": " + ActionDetector.isCrossRoads(path.get(i)));
+		
+	}
+	
+	public static void testCorners(){
+		Maze maze = MazeGenerator.getInstance().getRandomMaze(10, 10);
+		ArrayList<Cell> path = MazeSolver.getInstance().solveAStar(maze);
+		
+		MazeDisplayer.display(maze, path);
+		
+		for(int i = 0; i < path.size(); i++)
+			if(ActionDetector.isCorner(path.get(i)))
+				System.out.println(i);
+	}
+	
+	public static void testTurnDirections(){
+		Maze maze = MazeGenerator.getInstance().getRandomMaze(10, 10);
+		ArrayList<Cell> path = MazeSolver.getInstance().solveAStar(maze);
+		
+		MazeDisplayer.display(maze, path);
+		
+		for(int i = 1; i < path.size() - 1; i++)
+			System.out.println(i + ": " + ActionDetector.detectTurnDirection(path.get(i - 1), path.get(i), path.get(i + 1)));
 	}
 
 }
