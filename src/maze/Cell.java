@@ -6,7 +6,7 @@ public class Cell {
 	private boolean isVisited = false;
 	private int row;
 	private int column;
-	private Wall[] walls;//North, South, West, East
+	private Wall[] walls;//North, East, South, West
 	
 	public Cell(){
 		walls = new Wall[4];
@@ -16,8 +16,8 @@ public class Cell {
 		
 		walls[0].setTarget(this);
 		walls[1].setSource(this);
-		walls[2].setTarget(this);
-		walls[3].setSource(this);
+		walls[3].setTarget(this);
+		walls[2].setSource(this);
 	}
 	
 	public boolean isVisited() {
@@ -67,20 +67,20 @@ public class Cell {
 		if(northCell != null && !northCell.isVisited())
 			notVisitedNeighbours.add(0);
 		
-		Wall southWall = walls[1];
+		Wall southWall = walls[2];
 		Cell southCell = southWall.getTarget();
 		if(southCell != null && !southCell.isVisited())
-			notVisitedNeighbours.add(1);
-		
-		Wall westWall = walls[2];
-		Cell westCell = westWall.getSource();
-		if(westCell != null && !westCell.isVisited())
 			notVisitedNeighbours.add(2);
 		
-		Wall eastWall = walls[3];
+		Wall westWall = walls[3];
+		Cell westCell = westWall.getSource();
+		if(westCell != null && !westCell.isVisited())
+			notVisitedNeighbours.add(3);
+		
+		Wall eastWall = walls[1];
 		Cell eastCell = eastWall.getTarget();
 		if(eastCell != null && !eastCell.isVisited())
-			notVisitedNeighbours.add(3);
+			notVisitedNeighbours.add(1);
 		
 		return notVisitedNeighbours;
 	}

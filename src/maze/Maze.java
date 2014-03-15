@@ -30,7 +30,7 @@ public class Maze {
 						maze[i+1][j].setRow(i+1);
 						maze[i+1][j].setColumn(j);
 					}
-					Wall wall = maze[i][j].getWall(1);
+					Wall wall = maze[i][j].getWall(2);
 					wall.setSource(maze[i][j]);
 					wall.setTarget(maze[i+1][j]);
 					maze[i+1][j].setWall(0, wall);
@@ -42,10 +42,10 @@ public class Maze {
 						maze[i][j+1].setRow(i);
 						maze[i][j+1].setColumn(j+1);
 					}
-					Wall wall = maze[i][j].getWall(3);
+					Wall wall = maze[i][j].getWall(1);
 					wall.setSource(maze[i][j]);
 					wall.setTarget(maze[i][j+1]);
-					maze[i][j+1].setWall(2, wall);
+					maze[i][j+1].setWall(3, wall);
 				}
 			}
 		}

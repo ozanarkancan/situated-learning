@@ -41,7 +41,7 @@ public class MazeDisplay extends JPanel{
 					g.setColor(Color.BLACK);
 				}
 				
-				Wall leftWall = current.getWall(2);
+				Wall leftWall = current.getWall(3);
 				if(!leftWall.isCarved())
 					g.fillRect(leftWall.getTarget().getColumn() * 30, leftWall.getTarget().getRow() * 30, 5, 30);
 				

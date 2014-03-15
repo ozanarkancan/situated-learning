@@ -68,7 +68,7 @@ public class MazeGenerator {
 				Wall wall = currentCell.getWall(randomNeighbour);
 				wall.setCarved(true);
 				
-				currentCell = (randomNeighbour == 0 || randomNeighbour == 2) 
+				currentCell = (randomNeighbour == 0 || randomNeighbour == 3) 
 						? wall.getSource() : wall.getTarget();
 				currentCell.setVisited(true);
 				notVisitedCells.remove(currentCell);

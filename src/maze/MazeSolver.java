@@ -29,7 +29,7 @@ public class MazeSolver {
 			
 			for(int i = 0; i < 4; i++){
 				if(walls[i].isCarved()){
-					if(i == 0 || i == 2){
+					if(i == 0 || i == 3){
 						Node n = new Node(walls[i].getSource(), this, maze.getDestination());
 						neighbours.add(n);
 					}

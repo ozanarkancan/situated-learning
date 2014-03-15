@@ -1,6 +1,6 @@
 import java.util.ArrayList;
 
-import action.ActionDetector;
+import action.ActionDefiner;
 import action.CellPair;
 import action.Direction;
 import maze.Cell;
@@ -28,7 +28,7 @@ public class ActionDetectorTest {
 		MazeDisplayer.display(maze, path);
 		
 		try {
-			Direction d = ActionDetector.getDirection(path.get(0), path.get(1));
+			Direction d = ActionDefiner.getDirection(path.get(0), path.get(1));
 			System.out.println(d);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -42,7 +42,7 @@ public class ActionDetectorTest {
 		MazeDisplayer.display(maze, path);
 		
 		try {
-			Direction d = ActionDetector.getDirection(path.get(0), path.get(0));
+			Direction d = ActionDefiner.getDirection(path.get(0), path.get(0));
 			System.out.println(d);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -50,11 +50,11 @@ public class ActionDetectorTest {
 	}
 	
 	public static void testStraightPaths(){
-		Maze maze = MazeGenerator.getInstance().getRandomMaze(10, 10);
+		Maze maze = MazeGenerator.getInstance().getRandomMaze(14, 14);
 		ArrayList<Cell> path = MazeSolver.getInstance().solveAStar(maze);
 		
 		MazeDisplayer.display(maze, path);
-		ArrayList<CellPair> pairs = ActionDetector.getStraightPaths(path);
+		ArrayList<CellPair> pairs = ActionDefiner.getStraightPaths(path);
 		
 		for(CellPair pair : pairs){
 			System.out.println("Start(row, column): (" + pair.start.getRow() + ", " + pair.start.getColumn() + ")");
@@ -71,7 +71,7 @@ public class ActionDetectorTest {
 		MazeDisplayer.display(maze, path);
 		
 		for(int i = 0; i < path.size(); i++)
-			System.out.println(i + ": " + ActionDetector.isCrossRoads(path.get(i)));
+			System.out.println(i + ": " + ActionDefiner.isCrossRoads(path.get(i)));
 		
 	}
 	
@@ -82,7 +82,7 @@ public class ActionDetectorTest {
 		MazeDisplayer.display(maze, path);
 		
 		for(int i = 0; i < path.size(); i++)
-			if(ActionDetector.isCorner(path.get(i)))
+			if(ActionDefiner.isCorner(path.get(i)))
 				System.out.println(i);
 	}
 	
@@ -93,7 +93,7 @@ public class ActionDetectorTest {
 		MazeDisplayer.display(maze, path);
 		
 		for(int i = 1; i < path.size() - 1; i++)
-			System.out.println(i + ": " + ActionDetector.detectTurnDirection(path.get(i - 1), path.get(i), path.get(i + 1)));
+			System.out.println(i + ": " + ActionDefiner.detectTurnDirection(path.get(i - 1), path.get(i), path.get(i + 1)));
 	}
 
 }

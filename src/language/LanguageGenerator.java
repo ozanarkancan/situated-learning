@@ -1,14 +1,11 @@
 package language;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-
-import javax.jws.Oneway;
 
 import maze.Cell;
 import maze.Maze;
 import utils.Randomizer;
-import action.ActionDetector;
+import action.ActionDefiner;
 import action.CellPair;
 import action.Direction;
 import action.TurnDirection;
@@ -28,7 +25,7 @@ public class LanguageGenerator {
 		
 		instructions.add(startDirection());
 		
-		ArrayList<CellPair> pairs = ActionDetector.getStraightPaths(path);
+		ArrayList<CellPair> pairs = ActionDefiner.getStraightPaths(path);
 		
 		int cellPairIndex = 0;
 		CellPair cellPair = pairs.size() == 0 ? null : pairs.get(cellPairIndex);
@@ -38,14 +35,14 @@ public class LanguageGenerator {
 			
 			if(cellPair == null || !current.equals(cellPair.start)){
 				if(current.equals(maze.getStart()))
-					instructions.add(instructionsAboutOneStep(null, current, path.get(i + 1)));
+					instructions.addAll(instructionsAboutOneStep(null, current, path.get(i + 1)));
 				else if(path.get(i + 1).equals(maze.getDestination()))
-					instructions.add(finalOneStep(path.get(i - 1), current, path.get(i + 1)));
+					instructions.addAll(finalOneStep(path.get(i - 1), current, path.get(i + 1)));
 				else
-					instructions.add(instructionsAboutOneStep(path.get(i - 1), current, path.get(i + 1)));
+					instructions.addAll(instructionsAboutOneStep(path.get(i - 1), current, path.get(i + 1)));
 			}
 			else{
-				instructions.add(instructionsAboutStraightPath(cellPair));
+				instructions.addAll(instructionsAboutStraightPath(cellPair));
 				i = cellPair.endIndexInPath;
 				cellPairIndex++;
 				if(cellPairIndex < pairs.size())
@@ -58,11 +55,11 @@ public class LanguageGenerator {
 		return instructions;
 	}
 	
-	private String startDirection(){
+	public String startDirection(){
 		String start = Randomizer.nextInt(2) == 0 ? "Turn your face to the " : "Turn to the ";
 		Direction startDirect;
 		try {
-			startDirect = ActionDetector.getDirection(path.get(0), path.get(1));
+			startDirect = ActionDefiner.getDirection(path.get(0), path.get(1));
 			start += startDirect.toString().toLowerCase() + " .";
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -71,28 +68,28 @@ public class LanguageGenerator {
 		return start;
 	}
 	
-	private String instructionsAboutOneStep(Cell prev, Cell current, Cell next){
-		String instruction = "";
+	public ArrayList<String> instructionsAboutOneStep(Cell prev, Cell current, Cell next){
+		ArrayList<String> instructions = new ArrayList<String>();
 		int rand;
 		
 		if(prev == null){//Current is start point
 			rand = Randomizer.nextInt(3);
 			switch (rand){
 			case 0:
-				instruction = "Pass one block .";
+				instructions.add("Pass one block .");
 				break;
 			case 1:
-				instruction = "Move one step .";
+				instructions.add("Move one step .");
 				break;
 			case 2:
-				instruction = "Take a step .";
+				instructions.add("Take a step .");
 				break;
 			}
 			
-			return instruction;
+			return instructions;
 		}
 		
-		TurnDirection turnDirection = ActionDetector.detectTurnDirection(prev, current, next);
+		TurnDirection turnDirection = ActionDefiner.detectTurnDirection(prev, current, next);
 		
 		try {
 			if (turnDirection != TurnDirection.FORWARD) {
@@ -106,16 +103,18 @@ public class LanguageGenerator {
 
 				switch (rand) {
 				case 0:
-					instruction = "Turn " + turnDirection.toString().toLowerCase() + " .";
+					instructions.add("Turn " + turnDirection.toString().toLowerCase() + " .");
 					break;
 				case 1:
-					instruction = "Turn your face to "
-							+ ActionDetector.getDirection(current, next).toString().toLowerCase() + " ."
-							+ " Take a step .";
+					instructions.add("Turn your face to the "
+							+ ActionDefiner.getDirection(current, next).toString().toLowerCase() + " .");
+					instructions.add("Take a step .");
 					break;
 				case 2:
-					instruction = "Turn " + turnDirection.toString().toLowerCase() + " at the ";
-					instruction += ActionDetector.isCorner(current) ? " corner ." : " crossroads.";
+					
+					String instruction = "Turn " + turnDirection.toString().toLowerCase() + " at the ";
+					instruction += ActionDefiner.isCorner(current) ? " corner ." : " crossroads .";
+					instructions.add(instruction);
 					break;
 				}
 			}
@@ -124,42 +123,41 @@ public class LanguageGenerator {
 
 				switch (rand) {
 				case 0:
-					instruction = "Pass one block .";
+					instructions.add("Pass one block .");
 					break;
 				case 1:
-					instruction = "Move one step .";
+					instructions.add("Move one step .");
 					break;
 				case 2:
-					instruction = "Take a step .";
+					instructions.add("Take a step .");
 					break;
 				}
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-		if(instruction.equals(""))
-			System.out.println("instructionsAboutOneStep");
-		return instruction;
+		return instructions;
 	}
 	
-	private String finalOneStep(Cell prev, Cell current, Cell next){
-		String instruction = "";
+	public ArrayList<String> finalOneStep(Cell prev, Cell current, Cell next){
+		ArrayList<String> instructions = new ArrayList<String>();
 		int rand;
 		
-		TurnDirection turnDirection = ActionDetector.detectTurnDirection(prev, current, next);
+		TurnDirection turnDirection = ActionDefiner.detectTurnDirection(prev, current, next);
 		
 		if (turnDirection == TurnDirection.FORWARD){
 			rand = Randomizer.nextInt(3);
 			
 			switch (rand) {
 			case 0:
-				instruction = "You will reach the destination after one step .";
+				instructions.add("You will reach the destination after one step .");
 				break;
 			case 1:
-				instruction = "Destination is one block later .";
+				instructions.add("Destination is one block later .");
 				break;
 			case 2:
-				instruction = "Take a step . You will be at the destination .";
+				instructions.add("Take a step .");
+				instructions.add("You will be at the destination .");
 				break;
 			}
 		}
@@ -168,61 +166,79 @@ public class LanguageGenerator {
 			
 			switch (rand) {
 			case 0:
-				instruction = "Destination is on the " + turnDirection.toString().toLowerCase() + " .";
+				instructions.add("Destination is on the " + turnDirection.toString().toLowerCase() + " .");
 				break;
 			case 1:
-				instruction = "Turn " + turnDirection.toString().toLowerCase() 
-					+ " . You will be at the destination .";
+				instructions.add("Turn " + turnDirection.toString().toLowerCase() + " .");
+				instructions.add("You will be at the destination .");
 				break;
 			}
 		}
-		if(instruction.equals(""))
-			System.out.println("finalOneStep");
-		return instruction;
+		return instructions;
 	}
 	
-	private String instructionsAboutStraightPath(CellPair pair){
-		String instruction = "";
+	public ArrayList<String> instructionsAboutStraightPath(CellPair pair){
+		ArrayList<String> instructions = new ArrayList<String>();
 		try{
 			if(pair.end.equals(maze.getDestination()))
-				instruction = finalStraightMove(pair.endIndexInPath - pair.startIndexInPath);
-			else if(ActionDetector.isCrossRoads(pair.end)){
+				instructions.addAll(finalStraightMove(pair.endIndexInPath - pair.startIndexInPath));
+			else{
+				String turnDirection = ActionDefiner.detectTurnDirection(path.get(pair.endIndexInPath - 1),
+						path.get(pair.endIndexInPath), path.get(pair.endIndexInPath + 1)).toString().toLowerCase();
+				if(ActionDefiner.isCrossRoads(pair.end)){
 				
-				ArrayList<Cell> subPath = new ArrayList<Cell>();
-				subPath.addAll(path.subList(pair.startIndexInPath, pair.endIndexInPath));
+					ArrayList<Cell> subPath = new ArrayList<Cell>();
+					subPath.addAll(path.subList(pair.startIndexInPath, pair.endIndexInPath));
 				
-				int numberOfSameTurn = ActionDetector.numberOfSameTurnAlongStraightPath(
-						subPath, ActionDetector.getDirection(pair.end, path.get(pair.endIndexInPath + 1)));
-			
-				if(numberOfSameTurn == 0 || numberOfSameTurn > 4){
-					instruction = Randomizer.nextInt(2) == 0 ? 
-							movingForwardInstruction(pair.endIndexInPath - pair.startIndexInPath)
-							+ " At the crossroads turn " : moveUntil(false);
+					int numberOfSameTurn = ActionDefiner.numberOfSameTurnAlongStraightPath(
+							subPath, ActionDefiner.getDirection(pair.end, path.get(pair.endIndexInPath + 1)));
+					
+					if(numberOfSameTurn == 0 || numberOfSameTurn > 4){
+						if(Randomizer.nextInt(2) == 0){
+							instructions.add(movingForwardInstruction(pair.endIndexInPath - pair.startIndexInPath));
+							instructions.add("At the crossroads turn " + turnDirection + " .");
+						}
+						else{
+							ArrayList<String> moveUntilIns = moveUntil(false);
+							String turnIns = moveUntilIns.get(moveUntilIns.size() - 1);
+							turnIns += turnDirection + " .";
+							moveUntilIns.remove(moveUntilIns.size() - 1);
+							moveUntilIns.add(turnIns);
+							instructions.addAll(moveUntilIns);
+						}
+					}
+					else{
+						instructions.add("Go along the street and take the " 
+								+ orderOfTurn(numberOfSameTurn + 1) + " on the " + turnDirection + " .");
+					}
+					
 				}
-				else
-					instruction = "Go along the street and take the " + orderOfTurn(numberOfSameTurn + 1) + " on the ";
-				String turnDirection = ActionDetector.detectTurnDirection(path.get(pair.endIndexInPath - 1),
-						path.get(pair.endIndexInPath), path.get(pair.endIndexInPath + 1)).toString().toLowerCase();
-				instruction += turnDirection + " .";
-			}
-			else if(ActionDetector.isCorner(pair.end)){
-				instruction = Randomizer.nextInt(2) == 0 ? 
-						instruction = movingForwardInstruction(pair.endIndexInPath - pair.startIndexInPath)
-						+ " At the corner turn " : moveUntil(true);
-				String turnDirection = ActionDetector.detectTurnDirection(path.get(pair.endIndexInPath - 1),
-						path.get(pair.endIndexInPath), path.get(pair.endIndexInPath + 1)).toString().toLowerCase();
-				instruction += turnDirection + " .";
+				else if(ActionDefiner.isCorner(pair.end)){
+					if(Randomizer.nextInt(2) == 0){
+						instructions.add(movingForwardInstruction(pair.endIndexInPath - pair.startIndexInPath));
+						instructions.add("At the corner turn " + turnDirection + " .");
+					}
+					else{
+						ArrayList<String> moveUntilIns = moveUntil(true);
+						String turnIns = moveUntilIns.get(moveUntilIns.size() - 1);
+						turnIns += turnDirection + " .";
+						moveUntilIns.remove(moveUntilIns.size() - 1);
+						moveUntilIns.add(turnIns);
+						instructions.addAll(moveUntilIns);
+					}
+				}
+				
+				if(pair.endIndexInPath + 1 == path.size() - 1)
+					instructions.add("You will be at the destination .");
 			}
 		}catch(Exception ex){
 			ex.printStackTrace();
 		}
-		if(instruction.equals(""))
-			System.out.println("instructionsAboutStraightPath");
-		return instruction;
+		return instructions;
 	}
 	
-	private String movingForwardInstruction(int numberOfSteps){
-		int rand = Randomizer.nextInt(3);
+	public String movingForwardInstruction(int numberOfSteps){
+		int rand = Randomizer.nextInt(4);
 		String instruction = "";
 		
 		switch(rand){
@@ -234,43 +250,46 @@ public class LanguageGenerator {
 			break;
 		case 2:
 			instruction = "Walk along the " + Integer.toString(numberOfSteps) + " blocks .";
+		case 3:
+			instruction = "Walk forward .";
 		}
-		if(instruction.equals(""))
-			System.out.println("movingForwardInstruction");
 		return instruction;
 	}
 	
-	private String moveUntil(boolean isEndCorner){
+	public ArrayList<String> moveUntil(boolean isEndCorner){
 		int rand = Randomizer.nextInt(2);
-		String instruction = "";
+		ArrayList<String> instructions = new ArrayList<String>();
 		
 		switch(rand){
 			case 0:
-				instruction = isEndCorner ? "Move until the wall . Turn " : "Move until the crossroads . Turn ";
+				if(isEndCorner)
+					instructions.add("Move until the wall .");
+				else
+					instructions.add("Move until the crossroads .");
+				instructions.add("Turn ");
 				break;
 			case 1:
-				instruction = "Walk forward and when you reach ";
+				instructions.add("Walk forward .");
+				String instruction = "When you reach";
 				instruction += isEndCorner ? " the wall turn " : " the intersection turn ";
+				instructions.add(instruction);
 				break;
 		}
-		if(instruction.equals(""))
-			System.out.println("move until");
-		return instruction;
+		return instructions;
 	}
 	
-	private String finalStraightMove(int numberOfSteps){
+	private ArrayList<String> finalStraightMove(int numberOfSteps){
 		int rand = Randomizer.nextInt(2);
-		String instruction = movingForwardInstruction(numberOfSteps);
+		ArrayList<String> instructions = new ArrayList<String>(); 
+		instructions.add(movingForwardInstruction(numberOfSteps));
 		
 		switch(rand){
-			case 0: instruction += "At the end of the street you will be at destination .";
+			case 0: instructions.add("At the end of the street you will be at the destination .");
 				break;
-			case 1: instruction += "Destination is at the end of the street .";
+			case 1: instructions.add("Destination is at the end of the street .");
 				break;
 		}
-		if(instruction.equals(""))
-			System.out.println("finalStraightMove");
-		return instruction;
+		return instructions;
 	}
 	
 	private String orderOfTurn(int count){
