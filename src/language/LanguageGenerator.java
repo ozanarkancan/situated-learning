@@ -208,8 +208,8 @@ public class LanguageGenerator {
 						}
 					}
 					else{
-						instructions.add("Go along the street and take the " 
-								+ orderOfTurn(numberOfSameTurn + 1) + " on the " + turnDirection + " .");
+						instructions.add("Go along the street and " +
+								"take the " + orderOfTurn(numberOfSameTurn + 1) + " on the " + turnDirection + " .");
 					}
 					
 				}
