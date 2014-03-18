@@ -28,12 +28,11 @@ public class DataHandler {
 		try {
 			
 			BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
+			DataStatistics.initialize();
 			
 			for(int m = 0; m < numberOfMaze; m++){
 				Maze maze = MazeGenerator.getInstance().getRandomMaze(height, width);
 				ArrayList<Cell> path = MazeSolver.getInstance().solveAStar(maze);
-				
-				MazeDisplayer.display(maze, path);
 				
 				Agent agent = new Agent(maze.getStart(), Randomizer.nextDirection());
 				LanguageGenerator langGen = new LanguageGenerator(maze, path);
@@ -56,9 +55,13 @@ public class DataHandler {
 							
 							moveInput(writer, instruction, agent);
 							
+							DataStatistics.updateUniqueInstruction(instruction);
+							DataStatistics.increaseNumberOfActions();
+							
 							agent.setLocation(path.get(i + 1));
 							
 							stopInput(writer, instruction, agent);
+							DataStatistics.increaseNumberOfActions();
 						}
 						else{
 							
@@ -86,21 +89,35 @@ public class DataHandler {
 								}
 								if(instructions.size() == 2 && !path.get(i + 1).equals(maze.getDestination())){
 									stopInput(writer, instructions.get(0), agent);
+									DataStatistics.increaseNumberOfActions();
+									
 									moveInput(writer, instructions.get(1), agent);
+									DataStatistics.updateUniqueInstruction(instructions.get(1));
+									DataStatistics.increaseNumberOfActions();
 								}
-								else
+								else{
 									moveInput(writer, instructions.get(0), agent);
+									DataStatistics.increaseNumberOfActions();
+								}
 							}
-								
+							
+							DataStatistics.updateUniqueInstruction(instructions.get(0));
+							DataStatistics.increaseNumberOfActions();
+							
 							agent.setLocation(path.get(i + 1));							
 							
 							if(instructions.size() == 2){
-								if(path.get(i + 1).equals(maze.getDestination()))
+								if(path.get(i + 1).equals(maze.getDestination())){
 										stopInput(writer, instructions.get(0), agent);
+										DataStatistics.increaseNumberOfActions();
+								}
 								stopInput(writer, instructions.get(1), agent);
+								DataStatistics.updateUniqueInstruction(instructions.get(1));
 							}
 							else
 								stopInput(writer, instructions.get(0), agent);
+							
+							DataStatistics.increaseNumberOfActions();
 						}
 					}
 					else{//TODO
@@ -111,11 +128,19 @@ public class DataHandler {
 						for(int j = 0; j < numberOfSteps; j++){
 							moveInput(writer, instructions.get(0), agent);
 							agent.setLocation(path.get(cellPair.startIndexInPath + j + 1));
+							DataStatistics.increaseNumberOfActions();
 						}
+						
+						DataStatistics.updateUniqueInstruction(instructions.get(0));
+						
 						stopInput(writer, instructions.get(0), agent);
+						DataStatistics.increaseNumberOfActions();
 						
 						if(cellPair.end.equals(maze.getDestination())){
 							stopInput(writer, instructions.get(1), agent);
+							
+							DataStatistics.updateUniqueInstruction(instructions.get(1));
+							DataStatistics.increaseNumberOfActions();
 						}else{
 							TurnDirection turnDirection = ActionDefiner
 									.detectTurnDirection(path.get(cellPair.endIndexInPath - 1),
@@ -133,12 +158,25 @@ public class DataHandler {
 								agent.turnRight();
 							}
 							
+							if(turnInsIndex != 0)
+								DataStatistics.updateUniqueInstruction(instructions.get(turnInsIndex));
+							
+							DataStatistics.increaseNumberOfActions();
+							
 							moveInput(writer, instructions.get(turnInsIndex), agent);
 							agent.setLocation(path.get(cellPair.endIndexInPath + 1));
-							stopInput(writer, instructions.get(turnInsIndex), agent);
 							
-							if(instructions.size() == 3)
+							DataStatistics.increaseNumberOfActions();
+							
+							stopInput(writer, instructions.get(turnInsIndex), agent);
+							DataStatistics.increaseNumberOfActions();
+							
+							if(instructions.size() == 3){
 								stopInput(writer, instructions.get(2), agent);
+								
+								DataStatistics.updateUniqueInstruction(instructions.get(2));
+								DataStatistics.increaseNumberOfActions();
+							}
 						}
 						
 						
@@ -154,6 +192,8 @@ public class DataHandler {
 			}
 			
 			writer.close();
+			
+			DataStatistics.printStatistics();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -191,16 +231,20 @@ public class DataHandler {
 		int numberOfTurnRight = ActionDefiner.numberOfTurnRight(agent, direction);
 		int randDirect = Randomizer.nextInt(2);
 		
+		DataStatistics.updateUniqueInstruction(instruction);
+		
 		if(numberOfTurnLeft != 0){
 			if(numberOfTurnLeft < numberOfTurnRight || (numberOfTurnLeft == numberOfTurnRight && randDirect == 0)) {
 				for(int i = 0; i < numberOfTurnLeft; i++){
 					turnLeftInput(writer, instruction, agent);
 					agent.turnLeft();
+					DataStatistics.increaseNumberOfActions();
 				}
 			}else{
 				for(int i = 0; i < numberOfTurnRight; i++){
 					turnRightInput(writer, instruction, agent);
 					agent.turnRight();
+					DataStatistics.increaseNumberOfActions();
 				}
 				
 				
@@ -208,5 +252,6 @@ public class DataHandler {
 		}
 		stopInput(writer, instruction, agent);
 		agent.setDirection(direction);
+		DataStatistics.increaseNumberOfActions();
 	}
 }
