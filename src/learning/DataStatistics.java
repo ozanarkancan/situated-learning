@@ -57,7 +57,7 @@ public class DataStatistics {
 	public static void printStatistics(){
 		System.out.println("Vocabulary size: " + vocabulary.size());
 		System.out.println("Number of tokens: " + numberOfTokens());
-		System.out.println("Unique instuction: " + uniqueInstruction.size());
+		System.out.println("Unique instruction: " + uniqueInstruction.size());
 		System.out.println("Number of actions: " + numberOfActions);
 	}
 
