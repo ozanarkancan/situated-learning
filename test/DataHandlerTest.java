@@ -8,7 +8,7 @@ public class DataHandlerTest {
 	}
 	
 	public static void trainingDataGenerationTest(){
-		DataHandler.generateTransitionBasedTrainingData("/home/cano/Desktop/unstructured.train", 100, 12, 12);
+		DataHandler.generateTransitionBasedTrainingData("/home/cano/Desktop/unstructured.test", 25, 12, 12);
 	}
 
 }

@@ -14,11 +14,39 @@ public class SVMFeatureFormatter implements IFeatureFormatter {
 	Dictionary dict;
 	@Override
 	public void format(String fileName, String extension) throws Exception{
-		BufferedReader reader = new BufferedReader(new FileReader(fileName));
-		BufferedWriter writer = new BufferedWriter(new FileWriter(fileName + "." + extension));
 		
 		dict = Dictionary.getInstance();
 		dict.build(fileName);
+		
+		
+		format(dict, fileName, extension);
+	}
+	
+	private String bagOfWords(String[] words){
+		ArrayList<Integer> indexes = new ArrayList<Integer>();
+		
+		for(String word : words){
+			int index = dict.getIndex(word);
+			if(!indexes.contains(index))
+				indexes.add(index);
+		}
+		
+		Collections.sort(indexes);
+		
+		String bagOfWordsFormatted = "";
+		
+		for(Integer index : indexes)
+			bagOfWordsFormatted += Integer.toString(index) + ":1 ";
+		
+		return bagOfWordsFormatted;	
+	}
+
+	@Override
+	public void format(Dictionary dict, String fileName, String extension) throws Exception {
+		BufferedReader reader = new BufferedReader(new FileReader(fileName));
+		BufferedWriter writer = new BufferedWriter(new FileWriter(fileName + "." + extension));
+		
+		this.dict = dict;
 		
 		String line = "";
 		
@@ -42,23 +70,6 @@ public class SVMFeatureFormatter implements IFeatureFormatter {
 		reader.close();
 		writer.close();
 		
-	}
-	
-	private String bagOfWords(String[] words){
-		ArrayList<Integer> indexes = new ArrayList<Integer>();
-		
-		for(String word : words)
-			if(!indexes.contains(word))
-				indexes.add(dict.getIndex(word));
-		
-		Collections.sort(indexes);
-		
-		String bagOfWordsFormatted = "";
-		
-		for(Integer index : indexes)
-			bagOfWordsFormatted += Integer.toString(index) + ":1 ";
-		
-		return bagOfWordsFormatted;	
 	}
 
 }

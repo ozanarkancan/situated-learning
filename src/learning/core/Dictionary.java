@@ -27,22 +27,16 @@ public class Dictionary {
 		BufferedReader reader = new BufferedReader(new FileReader(fileName));
 		String line = "";
 		
-		int inputLine = 0;
-		
 		while((line = reader.readLine()) != null){
-			if(line.equals("")){
-				inputLine = 0;
+			if(line.equals(""))
 				continue;
-			}
 			
-			if(inputLine == 0){
-				String[] words = line.trim().toLowerCase().split("\\s+");
-				for(String word : words){
-					if(!dict.containsKey(word))
-						dict.put(word, dict.size() + 1);
-				}
-			}else
-				inputLine++;
+			String[] words = line.trim().toLowerCase().split("\\s+");
+			for(String word : words)
+				if(!dict.containsKey(word))
+					dict.put(word, dict.size() + 1);
+			line = reader.readLine();
+			line = reader.readLine();
 		}
 		
 		reader.close();
