@@ -1,4 +1,4 @@
-package learning;
+package learning.data;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -33,6 +33,8 @@ public class DataHandler {
 			for(int m = 0; m < numberOfMaze; m++){
 				Maze maze = MazeGenerator.getInstance().getRandomMaze(height, width);
 				ArrayList<Cell> path = MazeSolver.getInstance().solveAStar(maze);
+				
+				writer.append("<maze>\n");
 				
 				Agent agent = new Agent(maze.getStart(), Randomizer.nextDirection());
 				LanguageGenerator langGen = new LanguageGenerator(maze, path);
@@ -188,7 +190,7 @@ public class DataHandler {
 							cellPair = null;
 					}
 				}
-				
+				writer.append("</maze>\n").flush();
 			}
 			
 			writer.close();

@@ -1,4 +1,4 @@
-package learning;
+package learning.data;
 
 import java.util.HashMap;
 

@@ -1,3 +1,4 @@
+package maze;
 import java.util.ArrayList;
 
 import maze.Cell;

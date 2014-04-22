@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.Formatter;
 
 import learning.core.Dictionary;
+import learning.feature.IFeatureFormatter;
 import learning.feature.SVMFeatureFormatter;
 import de.bwaldvogel.liblinear.Linear;
 import de.bwaldvogel.liblinear.Model;
@@ -14,11 +15,11 @@ import de.bwaldvogel.liblinear.SolverType;
 
 public class LiblinearClassifier implements IClassifier{
 	Model model;
-	SVMFeatureFormatter formatter;
+	IFeatureFormatter formatter;
 	Dictionary dict;
 	
-	public LiblinearClassifier() {
-		formatter = new SVMFeatureFormatter();
+	public LiblinearClassifier(IFeatureFormatter formatter) {
+		this.formatter = formatter;
 		dict = Dictionary.getInstance();
 	}
 	

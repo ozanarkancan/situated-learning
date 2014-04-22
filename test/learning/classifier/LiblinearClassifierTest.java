@@ -1,6 +1,8 @@
 package learning.classifier;
 
 import learning.evaluation.Evaluator;
+import learning.feature.SVMBigramStateFeatureFormatter;
+import learning.feature.SVMFeatureFormatter;
 
 public class LiblinearClassifierTest {
 
@@ -11,25 +13,25 @@ public class LiblinearClassifierTest {
 	}
 	
 	public static void train(){
-		LiblinearClassifier classifier = new LiblinearClassifier();
+		LiblinearClassifier classifier = new LiblinearClassifier(new SVMFeatureFormatter());
 		classifier.train("/home/cano/situatedLearning/data/unstructured.train.formatted", "model");
 	}
 	
 	public static void loadModel(){
-		LiblinearClassifier classifier = new LiblinearClassifier();
+		LiblinearClassifier classifier = new LiblinearClassifier(new SVMFeatureFormatter());
 		classifier.loadModel("/home/cano/situatedLearning/data/unstructured."
 				+ "train.formatted.model");
 	}
 	
 	public static void test(){
-		LiblinearClassifier classifier = new LiblinearClassifier();
+		LiblinearClassifier classifier = new LiblinearClassifier(new SVMFeatureFormatter());
 		classifier.test("/home/cano/situatedLearning/experiments/unstructured/unstructured.test", "predict");
 	}
 	
 	public static void pipe(){
 		
 		try {
-			LiblinearClassifier classifier = new LiblinearClassifier();
+			LiblinearClassifier classifier = new LiblinearClassifier(new SVMBigramStateFeatureFormatter());
 			
 			classifier.train("/home/cano/situatedLearning/experiments/unstructured/unstructured.train", "model");
 			
@@ -58,7 +60,6 @@ public class LiblinearClassifierTest {
 			/*System.out.println();
 			eval.printMissClassifiedInstances();*/
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
