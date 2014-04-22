@@ -8,6 +8,8 @@ import java.util.HashMap;
 public class Evaluator {
 	double correct = 0;
 	double miss = 0;
+	double correctAction = 0;
+	double missAction = 0;
 	
 	HashMap<Double, HashMap<Double, Integer>> confusionMatrix;
 	ArrayList<Integer> missClassified;
@@ -25,6 +27,7 @@ public class Evaluator {
 		String predictionLine = "";
 		
 		int lineIndex = 1;
+		boolean isActionCorrect = true;
 		
 		while((testLine = testReader.readLine()) != null){
 			predictionLine = predictionReader.readLine();
@@ -40,17 +43,28 @@ public class Evaluator {
 			else{
 				miss++;
 				missClassified.add(lineIndex);
-				if(confusionMatrix.containsKey(real)){
-					if(confusionMatrix.get(real).containsKey(predicted))
-						confusionMatrix.get(real).put(predicted, confusionMatrix.get(real).get(predicted) + 1);
-					else
-						confusionMatrix.get(real).put(predicted, 1);
-				}
-				else{
-					HashMap<Double, Integer> missPred = new HashMap<Double, Integer>();
-					missPred.put(predicted, 1);
-					confusionMatrix.put(real, missPred);
-				}
+				isActionCorrect = false;
+			}
+			
+			if(confusionMatrix.containsKey(real)){
+				if(confusionMatrix.get(real).containsKey(predicted))
+					confusionMatrix.get(real).put(predicted, confusionMatrix.get(real).get(predicted) + 1);
+				else
+					confusionMatrix.get(real).put(predicted, 1);
+			}
+			else{
+				HashMap<Double, Integer> missPred = new HashMap<Double, Integer>();
+				missPred.put(predicted, 1);
+				confusionMatrix.put(real, missPred);
+			}
+			
+			if(real == 0){
+				if(isActionCorrect)
+					correctAction++;
+				else
+					missAction++;
+				
+				isActionCorrect = true;
 			}
 			
 			lineIndex++;
@@ -60,9 +74,15 @@ public class Evaluator {
 		predictionReader.close();
 	}
 	
-	public void printAccuracy(){
-		System.out.println("Accuracy: " + correct/(correct+miss) + " (" 
-				+ (int)correct + "/" + (int)(correct+miss) + ")");
+	public void printAtomicActionAccuracy(){
+		System.out.println("Atomic Action Accuracy: " + correct/(correct+miss) + " (" 
+				+ (int)correct + "/" + (int)(correct + miss) + ")");
+	}
+	
+	public void printActionAccuracy(){
+		System.out.println("Action Accuracy: " 
+				+ correctAction/(correctAction+missAction) + " (" 
+				+ (int)correctAction + "/" + (int)(correctAction + missAction) + ")");
 	}
 	
 	public void printConfusionMatrix(){
@@ -76,7 +96,7 @@ public class Evaluator {
 					if(confusionMatrix.get(i).containsKey(j))
 						System.out.print(confusionMatrix.get(i).get(j) + "\t");
 					else
-						System.out.print(" \t");
+						System.out.print("0\t");
 				}
 			}
 			System.out.println();

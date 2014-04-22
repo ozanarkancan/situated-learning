@@ -21,10 +21,14 @@ import agent.Agent;
 
 public class DataHandler {
 	public static void generateTransitionBasedTrainingData(String fileName){
-		generateTransitionBasedTrainingData(fileName, 1000, 12, 12);
+		generateTransitionBasedData(fileName, 1000, 12, 12, false);
 	}
 	
-	public static void generateTransitionBasedTrainingData(String fileName, int numberOfMaze, int height, int width){
+	public static void generateTransitionBasedTestData(String fileName){
+		generateTransitionBasedData(fileName, 500, 12, 12, true);
+	}
+	
+	public static void generateTransitionBasedData(String fileName, int numberOfMaze, int height, int width, boolean isTestData){
 		try {
 			
 			BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
@@ -38,6 +42,8 @@ public class DataHandler {
 				
 				Agent agent = new Agent(maze.getStart(), Randomizer.nextDirection());
 				LanguageGenerator langGen = new LanguageGenerator(maze, path);
+				if(isTestData)
+					langGen.enableTestState();
 				
 				startState(writer, langGen.startDirection(), agent, path.get(0), path.get(1));
 				

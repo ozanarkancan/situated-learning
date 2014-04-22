@@ -14,10 +14,12 @@ public class LanguageGenerator {
 	
 	Maze maze;
 	ArrayList<Cell> path;
+	boolean testStateEnabled;
 	
 	public LanguageGenerator(Maze maze, ArrayList<Cell> path){
 		this.maze = maze;
 		this.path = path;
+		testStateEnabled = false;
 	}
 	
 	public ArrayList<String> generateInstructions(){
@@ -72,27 +74,10 @@ public class LanguageGenerator {
 		ArrayList<String> instructions = new ArrayList<String>();
 		int rand;
 		
-		if(prev == null){//Current is start point
-			rand = Randomizer.nextInt(3);
-			switch (rand){
-			case 0:
-				instructions.add("Pass one block");
-				break;
-			case 1:
-				instructions.add("Move one step");
-				break;
-			case 2:
-				instructions.add("Take a step");
-				break;
-			}
-			
-			return instructions;
-		}
-		
-		TurnDirection turnDirection = ActionDefiner.detectTurnDirection(prev, current, next);
+		TurnDirection turnDirection = prev == null ? null : ActionDefiner.detectTurnDirection(prev, current, next);
 		
 		try {
-			if (turnDirection != TurnDirection.FORWARD) {
+			if (prev != null && turnDirection != TurnDirection.FORWARD) {
 				rand = Randomizer.nextInt(9);
 				if(rand > 4)
 					rand = 0;
@@ -103,33 +88,55 @@ public class LanguageGenerator {
 
 				switch (rand) {
 				case 0:
-					instructions.add("Turn " + turnDirection.toString().toLowerCase());
+					if(testStateEnabled)
+						instructions.add("Go " + turnDirection.toString().toLowerCase());
+					else
+						instructions.add("Turn " + turnDirection.toString().toLowerCase());
 					break;
 				case 1:
-					instructions.add("Turn your face to the "
-							+ ActionDefiner.getDirection(current, next).toString().toLowerCase());
-					instructions.add("Take a step");
+					if(testStateEnabled){
+						instructions.add("Turn to face the street on your "
+								+ ActionDefiner.getDirection(current, next).toString().toLowerCase());
+						instructions.add("Go one block");
+					}else{
+						instructions.add("Turn your face to the "
+								+ ActionDefiner.getDirection(current, next).toString().toLowerCase());
+						instructions.add("Take a step");
+					}
 					break;
 				case 2:
-					
-					String instruction = "Turn " + turnDirection.toString().toLowerCase() + " at the";
-					instruction += ActionDefiner.isCorner(current) ? " corner" : " crossroads";
-					instructions.add(instruction);
+					if(testStateEnabled){
+						String instruction = "Go " + turnDirection.toString().toLowerCase() + " at the";
+						instruction += ActionDefiner.isCorner(current) ? " corner" : " intersection";
+						instructions.add(instruction);
+					}else{
+						String instruction = "Turn " + turnDirection.toString().toLowerCase() + " at the";
+						instruction += ActionDefiner.isCorner(current) ? " corner" : " crossroads";
+						instructions.add(instruction);
+					}
 					break;
 				}
 			}
 			else{
 				rand = Randomizer.nextInt(3);
-
-				switch (rand) {
+				switch (rand){
 				case 0:
-					instructions.add("Pass one block");
+					if(testStateEnabled)
+						instructions.add("Go one block");
+					else
+						instructions.add("Pass one block");
 					break;
 				case 1:
-					instructions.add("Move one step");
+					if(testStateEnabled)
+						instructions.add("Walk one block");
+					else
+						instructions.add("Move one step");
 					break;
 				case 2:
-					instructions.add("Take a step");
+					if(testStateEnabled)
+						instructions.add("Move to forward block");
+					else
+						instructions.add("Take a step");
 					break;
 				}
 			}
@@ -150,14 +157,25 @@ public class LanguageGenerator {
 			
 			switch (rand) {
 			case 0:
-				instructions.add("You will reach the destination after one step");
+				if(testStateEnabled)
+					instructions.add("You will be at the destination one block later");
+				else
+					instructions.add("You will reach the destination after one step");
 				break;
 			case 1:
-				instructions.add("Destination is one block later");
+				if(testStateEnabled)
+					instructions.add("One step later you will be at the destination");
+				else
+					instructions.add("Destination is one block later");
 				break;
 			case 2:
-				instructions.add("Take a step");
-				instructions.add("You will be at the destination");
+				if(testStateEnabled){
+					instructions.add("Go one block");
+					instructions.add("You will reach the destination");
+				}else{
+					instructions.add("Take a step");
+					instructions.add("You will be at the destination");
+				}
 				break;
 			}
 		}
@@ -166,11 +184,19 @@ public class LanguageGenerator {
 			
 			switch (rand) {
 			case 0:
-				instructions.add("Destination is on the " + turnDirection.toString().toLowerCase());
+				if(testStateEnabled)
+					instructions.add("One block on the " + turnDirection.toString().toLowerCase() + " is your destination");
+				else
+					instructions.add("Destination is on the " + turnDirection.toString().toLowerCase());
 				break;
 			case 1:
-				instructions.add("Turn " + turnDirection.toString().toLowerCase());
-				instructions.add("You will be at the destination");
+				if(testStateEnabled){
+					instructions.add("Take a turn on your " + turnDirection.toString().toLowerCase());
+					instructions.add("You will reach the destination block");
+				}else{
+					instructions.add("Turn " + turnDirection.toString().toLowerCase());
+					instructions.add("You will be at the destination");
+				}
 				break;
 			}
 		}
@@ -196,7 +222,10 @@ public class LanguageGenerator {
 					if(numberOfSameTurn == 0 || numberOfSameTurn > 4){
 						if(Randomizer.nextInt(2) == 0){
 							instructions.add(movingForwardInstruction(pair.endIndexInPath - pair.startIndexInPath));
-							instructions.add("At the crossroads turn " + turnDirection);
+							if(testStateEnabled)
+								instructions.add("Take a turn on your " + turnDirection + " at the crossroads");
+							else
+								instructions.add("At the crossroads turn " + turnDirection);
 						}
 						else{
 							ArrayList<String> moveUntilIns = moveUntil(false);
@@ -208,15 +237,22 @@ public class LanguageGenerator {
 						}
 					}
 					else{
-						instructions.add("Go along the street and " +
-								"take the " + orderOfTurn(numberOfSameTurn + 1) + " on the " + turnDirection);
+						if(testStateEnabled)
+							instructions.add("Move along the street and " + 
+									"turn at the " + orderOfTurn(numberOfSameTurn + 1) + " " + turnDirection);
+						else
+							instructions.add("Go along the street and " +
+									"take the " + orderOfTurn(numberOfSameTurn + 1) + " on the " + turnDirection);
 					}
 					
 				}
 				else if(ActionDefiner.isCorner(pair.end)){
 					if(Randomizer.nextInt(2) == 0){
 						instructions.add(movingForwardInstruction(pair.endIndexInPath - pair.startIndexInPath));
-						instructions.add("At the corner turn " + turnDirection);
+						if(testStateEnabled)
+							instructions.add("Take a turn on your " + turnDirection + " at the corner");
+						else
+							instructions.add("At the corner turn " + turnDirection);
 					}
 					else{
 						ArrayList<String> moveUntilIns = moveUntil(true);
@@ -228,8 +264,12 @@ public class LanguageGenerator {
 					}
 				}
 				
-				if(pair.endIndexInPath + 1 == path.size() - 1)
-					instructions.add("You will be at the destination");
+				if(pair.endIndexInPath + 1 == path.size() - 1){
+					if(testStateEnabled)
+						instructions.add("You will reach the destination");
+					else
+						instructions.add("You will be at the destination");
+				}
 			}
 		}catch(Exception ex){
 			ex.printStackTrace();
@@ -243,15 +283,27 @@ public class LanguageGenerator {
 		
 		switch(rand){
 		case 0:
-			instruction = "Go along the street";
+			if(testStateEnabled)
+				instruction = "Move along the street";
+			else
+				instruction = "Go along the street";
 			break;
 		case 1:
-			instruction = "Go ahead";
+			if(testStateEnabled)
+				instruction = "Go straight";
+			else
+				instruction = "Go ahead";
 			break;
 		case 2:
-			instruction = "Walk along the " + Integer.toString(numberOfSteps) + " blocks";
+			if(testStateEnabled)
+				instruction = "Take " + Integer.toString(numberOfSteps) + " steps";
+			else
+				instruction = "Walk along the " + Integer.toString(numberOfSteps) + " blocks";
 		case 3:
-			instruction = "Walk forward";
+			if(testStateEnabled)
+				instruction = "Go forward";
+			else
+				instruction = "Walk forward";
 		}
 		return instruction;
 	}
@@ -262,17 +314,36 @@ public class LanguageGenerator {
 		
 		switch(rand){
 			case 0:
-				if(isEndCorner)
-					instructions.add("Move until the wall");
+				if(isEndCorner){
+					if(testStateEnabled)
+						instructions.add("Walk until you reach the wall");
+					else
+						instructions.add("Move until the wall");
+				}
+				else{
+					if(testStateEnabled)
+						instructions.add("Walk until you reach the crossroads");
+					else
+						instructions.add("Move until the crossroads");
+				}
+				
+				if(testStateEnabled)
+					instructions.add("Go ");
 				else
-					instructions.add("Move until the crossroads");
-				instructions.add("Turn ");
+					instructions.add("Turn ");
 				break;
 			case 1:
-				instructions.add("Walk forward");
-				String instruction = "When you reach";
-				instruction += isEndCorner ? " the wall turn " : " the intersection turn ";
-				instructions.add(instruction);
+				if(testStateEnabled){
+					instructions.add("Move along");
+					String instruction = isEndCorner ? "When you face the wall turn " : "At the intersection turn ";
+					instructions.add(instruction);
+				}
+				else{
+					instructions.add("Walk forward");
+					String instruction = "When you reach";
+					instruction += isEndCorner ? " the wall turn " : " the intersection turn ";
+					instructions.add(instruction);
+				}
 				break;
 		}
 		return instructions;
@@ -283,11 +354,17 @@ public class LanguageGenerator {
 		ArrayList<String> instructions = new ArrayList<String>(); 
 		instructions.add(movingForwardInstruction(numberOfSteps));
 		
-		switch(rand){
-			case 0: instructions.add("At the end of the street you will be at the destination");
+		if(testStateEnabled)
+			instructions.add("You will reach the destination at the end of the street");
+		else{
+			switch(rand){
+			case 0:
+				instructions.add("At the end of the street you will be at the destination");
 				break;
-			case 1: instructions.add("Destination is at the end of the street");
+			case 1:
+				instructions.add("Destination is at the end of the street");
 				break;
+			}
 		}
 		return instructions;
 	}
@@ -311,6 +388,14 @@ public class LanguageGenerator {
 			order = "fifth";
 		}
 		return order;
+	}
+	
+	public void enableTestState(){
+		testStateEnabled = true;
+	}
+	
+	public void disableTestState(){
+		testStateEnabled = false;
 	}
 
 }

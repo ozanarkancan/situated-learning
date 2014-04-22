@@ -6,7 +6,6 @@ import java.util.Formatter;
 
 import learning.core.Dictionary;
 import learning.feature.IFeatureFormatter;
-import learning.feature.SVMFeatureFormatter;
 import de.bwaldvogel.liblinear.Linear;
 import de.bwaldvogel.liblinear.Model;
 import de.bwaldvogel.liblinear.Parameter;
