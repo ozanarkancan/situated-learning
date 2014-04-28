@@ -16,5 +16,6 @@ public class ExperimentConfiguration {
 	public boolean enableCumulativeTrainingTesting = false;
 	public int atomicActionLimit = 0;
 	public ClassifierType classifierType = ClassifierType.LIBLINEAR;
+	public String[] svmOptions;
 
 }

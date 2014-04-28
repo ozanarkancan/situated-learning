@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.PrintStream;
+import java.nio.file.Files;
 
 import experiments.ExperimentConfiguration.ClassifierType;
 import learning.classifier.IClassifier;
@@ -23,22 +24,14 @@ public class BaseExperiment implements IExperiment{
 	
 	@Override
 	public void run(String trainingFile, String testFile) {
-		PrintStream out = null;
 		try {
-			if(configuration.outputFile != null){
-				out = System.out;
-				PrintStream stream = new PrintStream(configuration.outputFile);
-				System.setOut(stream);
-			}
-			
 			IClassifier classifier;
 			
 			if(configuration.classifierType == ClassifierType.LIBLINEAR)
 				classifier = new LiblinearClassifier(new SVMBigramStateFeatureFormatter());
 			else{
 				classifier = new LibsvmClassifier(new SVMBigramStateFeatureFormatter());
-				String[] args = new String[]{"-t", "1", "-d", "2"};
-				((LibsvmClassifier)classifier).setArgs(args);
+				((LibsvmClassifier)classifier).setArgs(configuration.svmOptions);
 			}
 			
 			if(configuration.singleTraining){
@@ -47,7 +40,7 @@ public class BaseExperiment implements IExperiment{
 				System.out.println("\nTraining:");
 				classifier.test(trainingFile, "predict");
 			
-				Evaluator eval = new Evaluator();
+				Evaluator eval = new Evaluator(configuration.outputFile);
 				eval.evaluate(trainingFile + ".formatted", trainingFile + ".predict");
 				
 				if(configuration.showAtomicAccuracy){
@@ -72,8 +65,15 @@ public class BaseExperiment implements IExperiment{
 			
 				System.out.println("\nTesting:");
 				classifier.test(testFile, "predict");
-				eval = new Evaluator();
+				eval = new Evaluator(configuration.outputFile);
 				eval.evaluate(testFile + ".formatted", testFile + ".predict");
+				
+				//Delete files
+				new File(trainingFile + ".formatted").delete();
+				new File(trainingFile + ".model").delete();
+				new File(trainingFile + ".predict").delete();
+				new File(testFile + ".formatted").delete();
+				new File(testFile + ".predict").delete();
 				
 				if(configuration.showAtomicAccuracy){
 					System.out.println();
@@ -106,14 +106,12 @@ public class BaseExperiment implements IExperiment{
 					
 					System.out.println("Part" + Integer.toString(i) + "\n");
 					
-					classifier = new LiblinearClassifier(new SVMBigramStateFeatureFormatter());
-					
 					classifier.train(trainFile.getPath(), "model");
 				
 					System.out.println("\nTraining:");
 					classifier.test(trainFile.getPath(), "predict");
 				
-					Evaluator eval = new Evaluator();
+					Evaluator eval = new Evaluator(configuration.outputFile);
 					eval.evaluate(trainFile.getPath() + ".formatted", trainFile.getPath() + ".predict");
 					
 					if(configuration.showAtomicAccuracy){
@@ -137,9 +135,11 @@ public class BaseExperiment implements IExperiment{
 					}
 				
 					System.out.println("\nTesting:");
-					classifier.test(testFile, "predict");
-					eval = new Evaluator();
-					eval.evaluate(testFile + ".formatted", testFile + ".predict");
+					Files.copy(new File(testFile).toPath(), new File(testFile + Integer.toString(i)).toPath());
+					String copyTest = testFile + Integer.toString(i);
+					classifier.test(copyTest, "predict");
+					eval = new Evaluator(configuration.outputFile);
+					eval.evaluate(copyTest + ".formatted", copyTest + ".predict");
 					
 					if(configuration.showAtomicAccuracy){
 						System.out.println();
@@ -161,9 +161,14 @@ public class BaseExperiment implements IExperiment{
 						eval.printMissClassifiedInstances();
 					}
 					
-					//trainFile.delete();
-					File modelFile = new File(trainFile.getPath() + ".model");
-					modelFile.delete();
+					//Delete files
+					new File(trainFile + ".formatted").delete();
+					new File(trainFile + ".model").delete();
+					new File(trainFile + ".predict").delete();
+					trainFile.delete();
+					new File(copyTest + ".predict");
+					new File(copyTest + ".formatted");
+					new File(copyTest).delete();
 				}
 			}
 			else if(configuration.enableCV){
@@ -174,8 +179,6 @@ public class BaseExperiment implements IExperiment{
 		} catch (Exception e) {
 			e.printStackTrace();
 		}finally{
-			if(configuration.outputFile != null)//Reset default stdout
-				System.setOut(out);
 		}
 	}
 	
@@ -209,10 +212,8 @@ public class BaseExperiment implements IExperiment{
 				reader.close();
 				writer.close();
 				
-				if(!flagForLimit){
-					count++;
+				if(!flagForLimit)
 					break;
-				}
 			
 			} catch (Exception e){
 				e.printStackTrace();

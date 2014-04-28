@@ -21,7 +21,9 @@ public class CumulativeTrainingExperiment implements IExperiment{
 		System.out.println("Experiment has been completed.\n");
 	}
 	
-	public void setCLassifier(ClassifierType classifierType){
+	public void setClassifier(ClassifierType classifierType, String[] options){
 		this.config.classifierType = classifierType;
+		if(classifierType == ClassifierType.LIBSVM)
+			this.config.svmOptions = options;
 	}
 }
