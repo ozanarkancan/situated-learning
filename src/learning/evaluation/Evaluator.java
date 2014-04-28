@@ -146,8 +146,8 @@ public class Evaluator {
 		}else{
 			try{
 				BufferedWriter writer = new BufferedWriter(new FileWriter(this.outputFile, true));
-				writer.append("Confusion Matrix: ");
-				writer.append("\t0\t1\t2\t3");
+				writer.append("Confusion Matrix: \n");
+				writer.append("\t0\t1\t2\t3\n");
 				for(double i = 0; i < 4; i++){
 					writer.append(i + "\t");
 					if(confusionMatrix.containsKey(i)){
