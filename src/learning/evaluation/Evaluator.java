@@ -1,7 +1,9 @@
 package learning.evaluation;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -10,6 +12,7 @@ public class Evaluator {
 	double miss = 0;
 	double correctAction = 0;
 	double missAction = 0;
+	String outputFile = null;
 	
 	HashMap<Double, HashMap<Double, Integer>> confusionMatrix;
 	ArrayList<Integer> missClassified;
@@ -17,6 +20,12 @@ public class Evaluator {
 	public Evaluator(){
 		confusionMatrix = new HashMap<Double, HashMap<Double, Integer>>();
 		missClassified = new ArrayList<Integer>();
+	}
+	
+	public Evaluator(String outputFile){
+		confusionMatrix = new HashMap<Double, HashMap<Double, Integer>>();
+		missClassified = new ArrayList<Integer>();
+		this.outputFile = outputFile;
 	}
 	
 	public void evaluate(String testFormattedFile, String predictionFile) throws Exception{
@@ -75,31 +84,87 @@ public class Evaluator {
 	}
 	
 	public void printAtomicActionAccuracy(){
-		System.out.println("Atomic Action Accuracy: " + correct/(correct+miss) + " (" 
-				+ (int)correct + "/" + (int)(correct + miss) + ")");
+		if(this.outputFile == null){
+			System.out.println("Atomic Action Accuracy: " + correct/(correct+miss) + " (" 
+					+ (int)correct + "/" + (int)(correct + miss) + ")");}
+		else{
+			try{
+				BufferedWriter writer = new BufferedWriter(new FileWriter(this.outputFile, true));
+				writer.append("Atomic Action Accuracy: ");
+				writer.append(Double.toString(correct/(correct+miss)));
+				writer.append(" (");
+				writer.append(Integer.toString((int)correct));
+				writer.append("/");
+				writer.append(Integer.toString((int)(correct + miss)));
+				writer.append(")\n").flush();
+				writer.close();
+			}catch(Exception ex){
+				ex.printStackTrace();
+			}
+		}
 	}
 	
 	public void printActionAccuracy(){
-		System.out.println("Action Accuracy: " 
-				+ correctAction/(correctAction+missAction) + " (" 
-				+ (int)correctAction + "/" + (int)(correctAction + missAction) + ")");
+		if(this.outputFile == null){
+			System.out.println("Action Accuracy: " 
+					+ correctAction/(correctAction+missAction) + " (" 
+					+ (int)correctAction + "/" + (int)(correctAction + missAction) + ")");
+		}else{
+			try{
+				BufferedWriter writer = new BufferedWriter(new FileWriter(this.outputFile, true));
+				writer.append("Action Accuracy: ");
+				writer.append(Double.toString(correctAction/(correctAction+missAction)));
+				writer.append(" (");
+				writer.append(Integer.toString((int)correctAction));
+				writer.append("/");
+				writer.append(Integer.toString((int)(correctAction + missAction)));
+				writer.append(")\n").flush();
+				writer.close();
+			}catch(Exception ex){
+				ex.printStackTrace();
+			}
+		}
 	}
 	
 	public void printConfusionMatrix(){
-		System.out.println("Confusion Matrix: ");
-		System.out.println("\t0\t1\t2\t3");
+		if(this.outputFile == null){
+			System.out.println("Confusion Matrix: ");
+			System.out.println("\t0\t1\t2\t3");
 		
-		for(double i = 0; i < 4; i++){
-			System.out.print(i + "\t");
-			if(confusionMatrix.containsKey(i)){
-				for(double j = 0; j < 4; j++){
-					if(confusionMatrix.get(i).containsKey(j))
-						System.out.print(confusionMatrix.get(i).get(j) + "\t");
-					else
-						System.out.print("0\t");
+			for(double i = 0; i < 4; i++){
+				System.out.print(i + "\t");
+				if(confusionMatrix.containsKey(i)){
+					for(double j = 0; j < 4; j++){
+						if(confusionMatrix.get(i).containsKey(j))
+							System.out.print(confusionMatrix.get(i).get(j) + "\t");
+						else
+							System.out.print("0\t");
+					}
 				}
+				System.out.println();
 			}
-			System.out.println();
+		}else{
+			try{
+				BufferedWriter writer = new BufferedWriter(new FileWriter(this.outputFile, true));
+				writer.append("Confusion Matrix: ");
+				writer.append("\t0\t1\t2\t3");
+				for(double i = 0; i < 4; i++){
+					writer.append(i + "\t");
+					if(confusionMatrix.containsKey(i)){
+						for(double j = 0; j < 4; j++){
+							if(confusionMatrix.get(i).containsKey(j))
+								writer.append(Integer.toString(confusionMatrix.get(i).get(j)) + "\t");
+							else
+								writer.append("0\t");
+						}
+					}
+					writer.append("\n").flush();
+				}
+				writer.close();
+				
+			}catch(Exception ex){
+				ex.printStackTrace();
+			}
 		}
 	}
 	
