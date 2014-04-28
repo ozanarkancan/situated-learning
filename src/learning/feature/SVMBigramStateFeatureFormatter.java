@@ -46,7 +46,6 @@ public class SVMBigramStateFeatureFormatter implements IFeatureFormatter{
 		BufferedWriter writer = new BufferedWriter(new FileWriter(fileName + "." + extension));
 		
 		this.dict = dict;
-		
 		String line = "";
 		String[] prevStateInput = null;
 		String[] stateInput = null;
@@ -65,17 +64,20 @@ public class SVMBigramStateFeatureFormatter implements IFeatureFormatter{
 			
 			for(int i = 0; i < stateInput.length - 1; i++)
 				if(stateInput[i].equals("1"))
-					input += Integer.toString(dict.size() + 3 + i) + ":1 ";
-			input += Integer.toString(dict.size() + 7) + ":" + Integer.toString(Integer.parseInt(stateInput[4]) + 1) + " ";
+					input += Integer.toString(dict.size() + 1 + 1 + i) + ":1 ";
+			
+			input += Integer.toString(dict.size() + 1 + stateInput.length 
+					+ Integer.parseInt(stateInput[stateInput.length - 1])) + ":1 ";
 			
 			if(prevStateInput != null){
 				for(int i = 0; i < prevStateInput.length - 1; i++)
 					if(prevStateInput[i].equals("1"))
-						input += Integer.toString(dict.size() + 8 + i) + ":1 ";
-				input += Integer.toString(dict.size() + 12) + ":" + Integer.toString(Integer.parseInt(prevStateInput[4]) + 1);
+						input += Integer.toString(dict.size() + 1 + stateInput.length - 1 + 5 + i) + ":1 ";
+				input += Integer.toString(dict.size() + 1 + 2 * (stateInput.length - 1) + 5 
+						+ Integer.parseInt(stateInput[prevStateInput.length - 1])) + ":1 ";
 			}
 			else
-				input += Integer.toString(dict.size() + 12) + ":-1";
+				input += Integer.toString(dict.size() + 1 + 2 * (stateInput.length - 1) + 8 + 1) + ":1";
 			
 			String output = reader.readLine().trim();
 			writer.append(output + " " + input + "\n").flush();
