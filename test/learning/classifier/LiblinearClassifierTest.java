@@ -42,19 +42,23 @@ public class LiblinearClassifierTest {
 			eval.evaluate("/home/cano/situatedLearning/experiments/unstructured/unstructured.train.formatted", 
 					"/home/cano/situatedLearning/experiments/unstructured/unstructured.train.predict");
 			
-			eval.printAccuracy();
+			eval.printAtomicActionAccuracy();
+			System.out.println();
+			eval.printActionAccuracy();
 			System.out.println();
 			eval.printConfusionMatrix();
 			/*System.out.println();
 			eval.printMissClassifiedInstances();*/
 			
 			System.out.println("\nTest:");
-			classifier.test("/home/cano/situatedLearning/experiments/unstructured/unstructured.test", "predict");
+			classifier.test("/home/cano/situatedLearning/experiments/unstructured/unstructuredSimilarTrain.test", "predict");
 			eval = new Evaluator();
-			eval.evaluate("/home/cano/situatedLearning/experiments/unstructured/unstructured.test.formatted", 
-					"/home/cano/situatedLearning/experiments/unstructured/unstructured.test.predict");
+			eval.evaluate("/home/cano/situatedLearning/experiments/unstructured/unstructuredSimilarTrain.test.formatted", 
+					"/home/cano/situatedLearning/experiments/unstructured/unstructuredSimilarTrain.test.predict");
 			
-			eval.printAccuracy();
+			eval.printAtomicActionAccuracy();
+			System.out.println();
+			eval.printActionAccuracy();
 			System.out.println();
 			eval.printConfusionMatrix();
 			/*System.out.println();

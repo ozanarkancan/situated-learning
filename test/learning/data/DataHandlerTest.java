@@ -9,7 +9,7 @@ public class DataHandlerTest {
 	}
 	
 	public static void trainingDataGenerationTest(){
-		DataHandler.generateTransitionBasedTrainingData("/home/cano/situatedLearning/data/unstructured.test", 25, 12, 12);
+		DataHandler.generateTransitionBasedData("/home/cano/situatedLearning/data/unstructuredDifferentFromTrain.test", 50, 12, 12, true);
 	}
 
 }
