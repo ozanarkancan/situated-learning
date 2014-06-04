@@ -16,7 +16,7 @@ public class LanguageGeneratorTest {
 	}
 	
 	public static void testGeneration(){
-		Maze maze = MazeGenerator.getInstance().getRandomMaze(16, 16);
+		Maze maze = MazeGenerator.getInstance().getRandomMaze(8, 8);
 		ArrayList<Cell> path = MazeSolver.getInstance().solveAStar(maze);
 		
 		MazeDisplayer.display(maze, path);

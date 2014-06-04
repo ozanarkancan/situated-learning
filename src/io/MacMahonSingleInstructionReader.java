@@ -1,6 +1,7 @@
 
 package io;
 
+import edu.berkeley.nlp.tokenizer.PTBTokenizer;
 import graph.MacMahonEdge;
 import graph.MacMahonEdge.FloorType;
 import graph.MacMahonEdge.WallType;
@@ -11,8 +12,9 @@ import graph.MacMahonNode.ObjectType;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.io.ObjectInputStream.GetField;
+import java.io.StringReader;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -100,7 +102,13 @@ public class MacMahonSingleInstructionReader {
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder dBuilder;
 		try {
-			BufferedWriter writer = new BufferedWriter(new FileWriter(fileName + ".aikudata"));
+			BufferedWriter writerGrid = new BufferedWriter(new FileWriter(fileName + ".grid"));
+			BufferedWriter writerJelly = new BufferedWriter(new FileWriter(fileName + ".jelly"));
+			BufferedWriter writerL = new BufferedWriter(new FileWriter(fileName + ".l"));
+			
+			BufferedWriter writer = null;
+			BufferedWriter prevWriter = null;
+			
 			dBuilder = dbFactory.newDocumentBuilder();
 			Document doc = dBuilder.parse(singleIns);
 			//doc.getDocumentElement().normalize();
@@ -120,17 +128,31 @@ public class MacMahonSingleInstructionReader {
 					
 					String currFileName = instructionElement.getAttribute("filename");
 					String instruction = instructionElement.getTextContent().trim();
+					PTBTokenizer tokenizer = new edu.berkeley.nlp.tokenizer.PTBTokenizer();
+					tokenizer.setSource(new StringReader(instruction));
+					instruction = list2String(tokenizer.tokenize());
+					
 					String[] pathStr = pathElement.getTextContent()
 							.replace("(", "").replace(")", "")
 							.replace("[", "").replace("]", "")
 							.replace(",", "").trim().split("\\s+");
+					
+					prevWriter = writer;
+					
+					if(mapName.equals("Grid"))
+						writer = writerGrid;
+					else if(mapName.equals("L"))
+						writer = writerL;
+					else
+						writer = writerJelly;
 					
 					if(prevFileName.equals(""))
 					{
 						writer.append("<maze>\n");
 						prevFileName = currFileName;
 					}else if(!currFileName.equals(prevFileName)){
-						writer.append("</maze>\n<maze>\n");
+						prevWriter.append("</maze>\n").flush();
+						writer.append("<maze>\n");
 						prevFileName = currFileName;
 					}
 					
@@ -189,7 +211,9 @@ public class MacMahonSingleInstructionReader {
 				}
 			}
 			writer.append("</maze>");
-			writer.close();
+			writerGrid.close();
+			writerL.close();
+			writerJelly.close();
 			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -276,5 +300,63 @@ public class MacMahonSingleInstructionReader {
 			nonEdgeState += "0 ";
 		
 		return nonEdgeState;
+	}
+	
+	public static void rawInstructionText(String fileName){
+		File singleIns = new File(fileName);
+		
+		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder dBuilder;
+		try {
+			BufferedWriter writerGrid = new BufferedWriter(new FileWriter(fileName + ".gridraw"));
+			BufferedWriter writerJelly = new BufferedWriter(new FileWriter(fileName + ".jellyraw"));
+			BufferedWriter writerL = new BufferedWriter(new FileWriter(fileName + ".lraw"));
+			
+			BufferedWriter writer = null;
+			
+			dBuilder = dbFactory.newDocumentBuilder();
+			Document doc = dBuilder.parse(singleIns);
+			Node root = doc.getDocumentElement();
+			NodeList examples = root.getChildNodes();
+			
+			for(int i = 0; i < examples.getLength(); i++){
+				Node node = examples.item(i);
+				if(node.getNodeType() == Node.ELEMENT_NODE){
+					Element elem = (Element)node;
+					
+					String mapName = elem.getAttribute("map");;
+					Element instructionElement = (Element)(elem.getElementsByTagName("instruction").item(0));
+					
+					String instruction = instructionElement.getTextContent().trim();
+					PTBTokenizer tokenizer = new edu.berkeley.nlp.tokenizer.PTBTokenizer();
+					tokenizer.setSource(new StringReader(instruction));
+					instruction = list2String(tokenizer.tokenize());
+					
+					if(mapName.equals("Grid"))
+						writer = writerGrid;
+					else if(mapName.equals("L"))
+						writer = writerL;
+					else
+						writer = writerJelly;
+					
+					writer.append("<s> ").append(instruction.toLowerCase()).append(" </s>").append("\n");
+					writer.flush();
+				}
+			}
+			writerGrid.close();
+			writerL.close();
+			writerJelly.close();
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	private static String list2String(List<String> tokens){
+		String str = "";
+		for(String token : tokens)
+			str += token + " ";
+		return str.trim();
 	}
 }

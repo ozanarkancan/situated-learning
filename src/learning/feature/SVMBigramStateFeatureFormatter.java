@@ -15,7 +15,7 @@ public class SVMBigramStateFeatureFormatter implements IFeatureFormatter{
 	public void format(String fileName, String extension) throws Exception{
 		
 		dict = Dictionary.getInstance();
-		dict.build(fileName);
+		//dict.build(fileName);
 		
 		
 		format(dict, fileName, extension);
@@ -56,7 +56,7 @@ public class SVMBigramStateFeatureFormatter implements IFeatureFormatter{
 					prevStateInput = null;
 				continue;
 			}
-			String[] words = line.trim().toLowerCase().split("\\s+");
+			String[] words = line.trim().toLowerCase().replace(",", "").split("\\s+");
 			String input = bagOfWords(words);
 			
 			line = reader.readLine();

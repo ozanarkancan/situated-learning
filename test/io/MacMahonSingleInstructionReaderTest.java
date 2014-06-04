@@ -9,6 +9,7 @@ public class MacMahonSingleInstructionReaderTest {
 	public static void main(String[] args) {
 		//testReadMap();
 		testConvertInstructions();
+		testRawText();
 	}
 	
 	public static void testReadMap(){
@@ -29,6 +30,11 @@ public class MacMahonSingleInstructionReaderTest {
 		
 		
 		MacMahonSingleInstructionReader.convertInstructionsToAIKUFormat(maps, fileName);
+	}
+	
+	public static void testRawText(){
+		String fileName = "/home/cano/situatedLearning/experiments/corpussimilarity/SingleSentence.xml";
+		MacMahonSingleInstructionReader.rawInstructionText(fileName);
 	}
 
 }

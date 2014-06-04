@@ -31,10 +31,32 @@ public class Dictionary {
 			if(line.equals(""))
 				continue;
 			
-			String[] words = line.trim().toLowerCase().split("\\s+");
+			String[] words = line.trim().toLowerCase().replace(",", "").split("\\s+");
 			for(String word : words)
 				if(!dict.containsKey(word))
 					dict.put(word, dict.size() + 1);
+			line = reader.readLine();
+			line = reader.readLine();
+		}
+		
+		reader.close();
+	}
+	
+	public void buildBigram(String fileName) throws Exception{
+		
+		dict = new HashMap<String, Integer>();
+		
+		BufferedReader reader = new BufferedReader(new FileReader(fileName));
+		String line = "";
+		
+		while((line = reader.readLine()) != null){
+			if(line.equals(""))
+				continue;
+			
+			String[] words = line.trim().toLowerCase().replace(",", "").split("\\s+");
+			for(int i = 1; i < words.length; i++)
+				if(!dict.containsKey(words[i - 1] + words[i]))
+					dict.put(words[i - 1] + words[i], dict.size() + 1);
 			line = reader.readLine();
 			line = reader.readLine();
 		}
@@ -79,7 +101,7 @@ public class Dictionary {
 		if(dict.containsKey(word))
 			return dict.get(word);
 		else
-			return dict.size() + 2;//Unknown word index
+			return dict.size() + 1;//Unknown word index
 	}
 
 }

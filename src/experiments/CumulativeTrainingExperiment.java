@@ -1,6 +1,7 @@
 package experiments;
 
 import experiments.ExperimentConfiguration.ClassifierType;
+import experiments.ExperimentConfiguration.FeatureFormatterType;
 
 public class CumulativeTrainingExperiment implements IExperiment{
 	ExperimentConfiguration config;
@@ -25,5 +26,9 @@ public class CumulativeTrainingExperiment implements IExperiment{
 		this.config.classifierType = classifierType;
 		if(classifierType == ClassifierType.LIBSVM)
 			this.config.svmOptions = options;
+	}
+	
+	public void setFeatureFormatter(FeatureFormatterType featureFormmaterType){
+		this.config.featureFormatterType = featureFormmaterType;
 	}
 }

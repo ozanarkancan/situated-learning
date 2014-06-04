@@ -5,6 +5,10 @@ public class ExperimentConfiguration {
 		LIBLINEAR, LIBSVM;
 	}
 	
+	public enum FeatureFormatterType{
+		BIGRAMSTATEUNIGRAMWORD, BIGRAMSTATEANDWORD;
+	}
+	
 	public boolean singleTraining = true;
 	public boolean showAtomicAccuracy = true;
 	public boolean showActionAccuracy = true;
@@ -16,6 +20,7 @@ public class ExperimentConfiguration {
 	public boolean enableCumulativeTrainingTesting = false;
 	public int atomicActionLimit = 0;
 	public ClassifierType classifierType = ClassifierType.LIBLINEAR;
+	public FeatureFormatterType featureFormatterType = FeatureFormatterType.BIGRAMSTATEUNIGRAMWORD;
 	public String[] svmOptions;
 
 }

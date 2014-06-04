@@ -9,6 +9,7 @@ public class Maze {
 	private Cell[][] maze;
 	private Cell start;
 	private Cell destination;
+	private String name;
 	
 	public Maze(int h, int w){
 		this.setHeight(h);
@@ -97,6 +98,14 @@ public class Maze {
 
 	public void setWidth(int width) {
 		this.width = width;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 }

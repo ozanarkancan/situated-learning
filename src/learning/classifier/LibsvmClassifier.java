@@ -4,6 +4,8 @@ import java.io.IOException;
 
 import learning.core.Dictionary;
 import learning.feature.IFeatureFormatter;
+import learning.feature.SVMBigramStateAndWordsFeatureFormatter;
+import learning.feature.SVMBigramStateFeatureFormatter;
 import libsvm.svm;
 import libsvm.svm_model;
 
@@ -22,7 +24,10 @@ public class LibsvmClassifier implements IClassifier{
 	@Override
 	public void train(String trainFile, String extension) {
 		try {
-			dict.build(trainFile);
+			if(formatter instanceof SVMBigramStateFeatureFormatter)
+				dict.build(trainFile);
+			else if(formatter instanceof SVMBigramStateAndWordsFeatureFormatter)
+				dict.buildBigram(trainFile);
 			
 			formatter.format(dict, trainFile, "formatted");
 			

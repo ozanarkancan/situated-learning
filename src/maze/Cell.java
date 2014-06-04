@@ -7,6 +7,7 @@ public class Cell {
 	private int row;
 	private int column;
 	private Wall[] walls;//North, East, South, West
+	private boolean isThereObject = false;
 	
 	public Cell(){
 		walls = new Wall[4];
@@ -88,5 +89,13 @@ public class Cell {
 	public double euclideanDistance(Cell rhs){
 		return Math.sqrt(Math.pow(row - rhs.getRow(), 2) + 
 				Math.pow(column - rhs.getColumn(), 2));
+	}
+
+	public boolean hasObject() {
+		return isThereObject;
+	}
+
+	public void setThereObject(boolean isThereObject) {
+		this.isThereObject = isThereObject;
 	}
 }
