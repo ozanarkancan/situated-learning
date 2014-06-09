@@ -1,6 +1,7 @@
 package learning.classifier;
 
 import java.io.IOException;
+import java.util.StringTokenizer;
 
 import learning.core.Dictionary;
 import learning.feature.IFeatureFormatter;
@@ -8,6 +9,7 @@ import learning.feature.SVMBigramStateAndWordsFeatureFormatter;
 import learning.feature.SVMBigramStateFeatureFormatter;
 import libsvm.svm;
 import libsvm.svm_model;
+import libsvm.svm_node;
 
 public class LibsvmClassifier implements IClassifier{
 	svm_model model;
@@ -72,6 +74,26 @@ public class LibsvmClassifier implements IClassifier{
 	
 	public void setArgs(String[] args){
 		this.args = args;
+	}
+	
+	public double classify(String instance){
+		double result = 0;
+		
+		StringTokenizer st = new StringTokenizer(instance," \t\n\r\f:");
+		
+		int m = st.countTokens()/2;
+		svm_node[] x = new svm_node[m];
+		
+		for(int j=0;j<m;j++)
+		{
+			x[j] = new svm_node();
+			x[j].index = Integer.parseInt(st.nextToken());
+			x[j].value = Double.parseDouble(st.nextToken());
+		}
+		
+		result = svm.svm_predict(model,x);
+		
+		return result;
 	}
 
 }
