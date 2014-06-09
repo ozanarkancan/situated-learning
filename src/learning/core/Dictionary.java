@@ -7,17 +7,15 @@ import java.io.FileWriter;
 import java.util.HashMap;
 
 public class Dictionary {
-	private static Dictionary instance = null;
+	private static Dictionary builded = null;
 	private HashMap<String, Integer> dict;
 	
 	private Dictionary(){
 		dict = new HashMap<String, Integer>();
 	}
 	
-	public static Dictionary getInstance(){
-		if(instance == null)
-			instance = new Dictionary();
-		return instance;
+	public static Dictionary getBuildedInstance(){
+		return builded;
 	}
 	
 	public void build(String fileName) throws Exception{
@@ -40,6 +38,7 @@ public class Dictionary {
 		}
 		
 		reader.close();
+		builded = this;
 	}
 	
 	public void buildBigram(String fileName) throws Exception{
@@ -62,6 +61,7 @@ public class Dictionary {
 		}
 		
 		reader.close();
+		builded = this;
 	}
 	
 	public void save(String fileName) throws Exception{
