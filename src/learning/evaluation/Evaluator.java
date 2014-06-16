@@ -83,6 +83,14 @@ public class Evaluator {
 		predictionReader.close();
 	}
 	
+	public double atomicActionAccuracy(){
+		return correct/(correct+miss);
+	}
+	
+	public double actionAccuracy(){
+		return correctAction/(correctAction+missAction);
+	}
+	
 	public void printAtomicActionAccuracy(){
 		if(this.outputFile == null){
 			System.out.println("Atomic Action Accuracy: " + correct/(correct+miss) + " (" 

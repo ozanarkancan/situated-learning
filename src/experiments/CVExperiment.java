@@ -94,7 +94,7 @@ public class CVExperiment extends AbstractExperiment{
 		}
 	}
 	
-	public void splitFileCV(String fileName, int numberOfFolds){
+	public static void splitFileCV(String fileName, int numberOfFolds){
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(fileName));
 		
