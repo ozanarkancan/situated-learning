@@ -3,10 +3,11 @@ package learning.classifier;
 import java.io.IOException;
 import java.util.StringTokenizer;
 
-import learning.core.Dictionary;
 import learning.feature.IFeatureFormatter;
-import learning.feature.SVMBigramStateAndWordsFeatureFormatter;
-import learning.feature.SVMBigramStateFeatureFormatter;
+import learning.instance.IClassifiable;
+import learning.instance.IClassificationLabel;
+import learning.instance.IndexedLabel;
+import learning.instance.SVMFormatInput;
 import libsvm.svm;
 import libsvm.svm_model;
 import libsvm.svm_node;
@@ -15,23 +16,33 @@ public class LibsvmClassifier implements IClassifier{
 	svm_model model;
 	String modelFile;
 	IFeatureFormatter formatter;
-	Dictionary dict;
 	String[] args;
 	
-	public LibsvmClassifier(IFeatureFormatter formatter) {
+	public LibsvmClassifier(IFeatureFormatter formatter, ClassifierContract contract) {
 		this.formatter = formatter;
-		dict = Dictionary.getInstance();
+		//-t, -d, -g, -p, -c
+		args = new String[8];
+		
+		if(contract.kernelType == 2){
+			args[0] = "-d";
+			args[1] = Integer.toString(contract.d);
+		}else if(contract.kernelType == 3){
+			args[0] = "-g";
+			args[1] = Double.toString(contract.gamma);
+		}
+		
+		args[2] = "-t";
+		args[3] = Integer.toString(contract.kernelType);
+		args[4] = "-c";
+		args[5] = Double.toString(contract.C);
+		args[6] = "-p";
+		args[7] = Double.toString(contract.epsilon);
 	}
 	
 	@Override
 	public void train(String trainFile, String extension) {
 		try {
-			if(formatter instanceof SVMBigramStateFeatureFormatter)
-				dict.build(trainFile);
-			else if(formatter instanceof SVMBigramStateAndWordsFeatureFormatter)
-				dict.buildBigram(trainFile);
-			
-			formatter.format(dict, trainFile, "formatted");
+			formatter.format(trainFile, "formatted");
 			
 			String[] argv = new String[args.length + 2];
 			for(int i = 0; i < args.length; i++)
@@ -63,7 +74,7 @@ public class LibsvmClassifier implements IClassifier{
 	@Override
 	public void test(String testFile, String extension) {
 		try {
-			formatter.format(dict, testFile, "formatted");
+			formatter.format(testFile, "formatted");
 			svm_predict.main(new String[]{testFile + ".formatted", this.modelFile
 					, testFile + "." + extension});
 		} catch (Exception e) {
@@ -76,7 +87,7 @@ public class LibsvmClassifier implements IClassifier{
 		this.args = args;
 	}
 	
-	public double classify(String instance){
+	private double classify(String instance){
 		double result = 0;
 		
 		StringTokenizer st = new StringTokenizer(instance," \t\n\r\f:");
@@ -94,6 +105,13 @@ public class LibsvmClassifier implements IClassifier{
 		result = svm.svm_predict(model,x);
 		
 		return result;
+	}
+
+	@Override
+	public IClassificationLabel classify(IClassifiable instance) {
+		String input = ((SVMFormatInput)(instance.getInput())).indexedFeatureVector;
+		IndexedLabel label = new IndexedLabel((int)classify(input));
+		return label;
 	}
 
 }

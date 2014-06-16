@@ -10,7 +10,7 @@ public class Dictionary {
 	private static Dictionary builded = null;
 	private HashMap<String, Integer> dict;
 	
-	private Dictionary(){
+	public Dictionary(){
 		dict = new HashMap<String, Integer>();
 	}
 	

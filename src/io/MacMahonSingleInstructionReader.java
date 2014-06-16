@@ -25,6 +25,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import utils.Tokenizer;
+
 public class MacMahonSingleInstructionReader {
 	
 	public static MacMahonGraph readMap(String fileName){
@@ -328,9 +330,7 @@ public class MacMahonSingleInstructionReader {
 					Element instructionElement = (Element)(elem.getElementsByTagName("instruction").item(0));
 					
 					String instruction = instructionElement.getTextContent().trim();
-					PTBTokenizer tokenizer = new edu.berkeley.nlp.tokenizer.PTBTokenizer();
-					tokenizer.setSource(new StringReader(instruction));
-					instruction = list2String(tokenizer.tokenize());
+					instruction = Tokenizer.clean(instruction);
 					
 					if(mapName.equals("Grid"))
 						writer = writerGrid;
