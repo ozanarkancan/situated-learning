@@ -33,12 +33,17 @@ public class FeatureFormatterFactory {
 				formatter = new SVMUnigramStateAndWordsFeatureFormatter(dictionary);
 			else if(contract.stateHistory == 2)
 				formatter = new SVMBigramStateFeatureFormatter(dictionary);
+			else
+				throw new Exception("Unknown feature formatter");
 		}else if(contract.ngram == 2){
 			dictionary.buildBigram(contract.vocabularyFileName);
 			
 			if(contract.stateHistory == 2)
 				formatter = new SVMBigramStateAndWordsFeatureFormatter(dictionary);
-		}
+			else
+				throw new Exception("Unknown feature formatter");
+		}else
+			throw new Exception("Unknown feature formatter");
 		
 		return formatter;
 	}
