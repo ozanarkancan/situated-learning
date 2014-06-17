@@ -24,9 +24,11 @@ public class ClassifierFactory {
 		if(contract.kernelType == 1)
 			classifier = new LiblinearClassifier(FeatureFormatterFactory.getInstance()
 					.getFeatureFormatter(), contract);
-		else
+		else if(contract.kernelType <= 3)
 			classifier = new LibsvmClassifier(FeatureFormatterFactory.getInstance()
 					.getFeatureFormatter(), contract);
+		else
+			throw new Exception("Unknown classifier!");
 		
 		return classifier;
 	}

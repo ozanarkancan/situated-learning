@@ -1,15 +1,16 @@
 package experiment;
 
+import de.bwaldvogel.liblinear.SolverType;
+import experiments.AbstractExperiment;
 import experiments.CVExperiment;
 import experiments.CumulativeTrainingExperiment;
+import experiments.ExperimentFactory;
 import experiments.SingleExperiment;
-import experiments.ExperimentConfiguration.ClassifierType;
-import experiments.ExperimentConfiguration.FeatureFormatterType;
 
 public class ExperimentDemos {
 
 	public static void main(String[] args) {
-		//test1();
+		experiment1();
 		//test2();
 		//test3();
 		//test4();
@@ -30,10 +31,10 @@ public class ExperimentDemos {
 		//test19();
 		//test20();
 		//test21();
-		test22();
+		//test22();
 	}
 	
-	public static void test1(){
+	public static void experiment1(){
 		/*
 		 * Train 10k
 		 * Test includes similar instruction sentences with train has
@@ -44,12 +45,14 @@ public class ExperimentDemos {
 		 * Test File: /home/cano/situatedLearning/experiments/unstructured_Train10k_TestSimilarToTrain_single/unstructuredSimilarToTrain.test
 		 * */
 		
-		String trainingFile = "./experiments/unstructured_Train10k_TestSimilarToTrain_single/unstructured10k.train";
-		String testFile = "./experiments/unstructured_Train10k_TestSimilarToTrain_single/unstructuredSimilarToTrain.test";
-		String outputFile = "./experiments/unstructured_Train10k_TestSimilarToTrain_single/stdout.out";
+		String experimentConfigFile = "/home/cano/situatedLearning/experiments/unstructured_Train10k_TestSimilarToTrain_single/experimentConfigFile";
+		AbstractExperiment exp = ExperimentFactory.getInstance().getExperiment(experimentConfigFile);
 		
-		SingleExperiment experiment = new SingleExperiment(outputFile);
-		experiment.run(trainingFile, testFile);
+		System.out.println("Experiment 1 is running");
+		exp.run();
+		System.out.println("Experiment has finished.");
+		//SolverType.L1R_L2LOSS_SVC;
+		
 	}
 	
 	public static void test2(){
