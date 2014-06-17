@@ -1,6 +1,7 @@
 package maze;
 
 import java.util.ArrayList;
+
 import java.util.Random;
 import java.util.Stack;
 
@@ -14,6 +15,11 @@ public class MazeGenerator {
 	private int width = 0;
 	private Stack<Cell> cellStack;
 	private ArrayList<Cell> notVisitedCells;
+	
+	private boolean horizontalDirection = false;
+	private boolean verticalDirection = false;
+	private boolean patternActive = true;
+	private boolean patternInitialFlag = true;
 	
 	private MazeGenerator(){
 	}
@@ -64,9 +70,36 @@ public class MazeGenerator {
 			if(notVisitedNeighbours.size() != 0){
 				int randomNeighbour = notVisitedNeighbours.get(
 						Randomizer.nextInt(notVisitedNeighbours.size()));
+				
+				Pattern pattern = currentCell.getPattern();
+				pattern.setIndex(0);
+				
+				if (patternActive) {
+					
+					if (patternInitialFlag) pattern.setIndex(Randomizer.nextInt(4));
+					patternInitialFlag = false;
+				
+					if (randomNeighbour == 0 || randomNeighbour == 2)
+					{
+						if (horizontalDirection) pattern.setIndex(Randomizer.nextInt(4));
+						verticalDirection = true;
+						horizontalDirection = false;		
+					}
+					
+					if (randomNeighbour == 1 || randomNeighbour == 3)
+					{
+						if (verticalDirection) pattern.setIndex(Randomizer.nextInt(4));
+						horizontalDirection = true;
+						verticalDirection = false;		
+					}
+					
+					
+				}
+				
+				currentCell.setPattern(pattern);
 				cellStack.push(currentCell);
 				Wall wall = currentCell.getWall(randomNeighbour);
-				wall.setCarved(true);
+				wall.setCarved(true);		
 				
 				currentCell = (randomNeighbour == 0 || randomNeighbour == 3) 
 						? wall.getSource() : wall.getTarget();

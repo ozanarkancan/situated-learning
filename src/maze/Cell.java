@@ -7,10 +7,12 @@ public class Cell {
 	private int row;
 	private int column;
 	private Wall[] walls;//North, East, South, West
+	private Pattern pattern;
 	private boolean isThereObject = false;
 	
 	public Cell(){
 		walls = new Wall[4];
+		pattern = new Pattern();
 		
 		for(int i = 0; i < 4; i++)
 			walls[i] = new Wall();
@@ -58,6 +60,14 @@ public class Cell {
 	
 	public void setWall(int index, Wall wall){
 		walls[index] = wall;
+	}
+	
+	public Pattern getPattern(){
+		return pattern;
+	}
+	
+	public void setPattern(Pattern pattern){
+		this.pattern = pattern;
 	}
 	
 	public ArrayList<Integer> getNotVisitedNeighbours(){
