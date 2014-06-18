@@ -11,10 +11,16 @@ import learning.feature.FeatureFormatterFactory;
 import experiments.CVExperiment;
 
 public class GridSearch {
-	public class SearchSettings{
-		public Double[] paramForC = null;
-		public Double[] paramForEpsilon = null;
-		public Double[] paramForGamma = null;
+	public static class SearchSettings{
+		public Double[] paramForC;
+		public Double[] paramForEpsilon;
+		public Double[] paramForGamma;
+		
+		public SearchSettings(){
+			paramForC = null;
+			paramForEpsilon = null;
+			paramForGamma = null;
+		}
 	}
 	
 	//Returns optimum gamma, C, epsilon
@@ -24,7 +30,6 @@ public class GridSearch {
 		double maxAcc = 0;
 		
 		try{
-			CVExperiment.splitFileCV(fileName, 5);
 			FeatureFormatterFactory.getInstance().setContract(formatterContract);
 			
 			for(double gamma = settings.paramForGamma[0]; gamma <= settings.paramForGamma[1];
@@ -40,7 +45,10 @@ public class GridSearch {
 						ClassifierFactory.getInstance().setContract(classifierContract);
 						IClassifier classifier = ClassifierFactory.getInstance().getClassifier();
 						
+						double avgAccuracy = 0;
+						
 						for(int i = 0; i < 5; i++){
+							CVExperiment.splitFileCV(fileName, 5);
 							File tempTrainFile = new File(fileName + ".trainpart" 
 									+ Integer.toString(i));
 							File tempTestFile = new File(fileName + ".testpart" 
@@ -52,13 +60,7 @@ public class GridSearch {
 							Evaluator eval = new Evaluator();
 							eval.evaluate(tempTestFile.getPath() + ".formatted"
 									, tempTestFile.getPath() + ".predict");
-							
-							if(eval.actionAccuracy() > maxAcc){
-								maxAcc = eval.actionAccuracy();
-								results[0] = gamma;
-								results[1] = c;
-								results[2] = epsilon;
-							}
+							avgAccuracy += eval.actionAccuracy();
 							
 							new File(tempTrainFile.getPath() + ".formatted").delete();
 							new File(tempTrainFile.getPath() + ".model").delete();
@@ -68,6 +70,15 @@ public class GridSearch {
 							new File(tempTestFile.getPath()).delete();
 							tempTrainFile.delete();
 							tempTestFile.delete();
+						}
+						
+						avgAccuracy /= 5;
+						
+						if(avgAccuracy > maxAcc){
+							maxAcc = avgAccuracy;
+							results[0] = gamma;
+							results[1] = c;
+							results[2] = epsilon;
 						}
 					}
 				}
