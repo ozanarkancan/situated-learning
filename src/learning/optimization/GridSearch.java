@@ -47,8 +47,10 @@ public class GridSearch {
 						
 						double avgAccuracy = 0;
 						
+						CVExperiment.splitFileCV(fileName, 5);
+						
 						for(int i = 0; i < 5; i++){
-							CVExperiment.splitFileCV(fileName, 5);
+							
 							File tempTrainFile = new File(fileName + ".trainpart" 
 									+ Integer.toString(i));
 							File tempTestFile = new File(fileName + ".testpart" 
