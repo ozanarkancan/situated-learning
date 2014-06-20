@@ -63,6 +63,11 @@ public class ExperimentFactory {
 						configuration.atomicActionLimit = Integer.parseInt(params.get("atomicActionLimit"));
 					else
 						throw new Exception("atomicActionLimit is not defined!");
+					if(params.containsKey("testFile"))
+						configuration.testFile = params.get("testFile");
+					else
+						throw new Exception("testFile is not defined!");
+					
 					experiment = new CumulativeTrainingExperiment(configuration);
 				}else
 					throw new Exception("Unknown experimentType");
@@ -159,7 +164,7 @@ public class ExperimentFactory {
 				else
 					throw new Exception("degree of polynomial(d) is not defined!");
 			}else if(contract.kernelType == 3){
-				if(params.containsKey("d"))
+				if(params.containsKey("gamma"))
 					contract.gamma = Double.parseDouble(params.get("gamma"));
 				else
 					throw new Exception("gamma(sigma squared) is not defined!");

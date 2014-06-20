@@ -32,7 +32,7 @@ public class LibsvmClassifier implements IClassifier{
 		}
 		
 		args[2] = "-t";
-		args[3] = Integer.toString(contract.kernelType);
+		args[3] = Integer.toString(contract.kernelType - 1);
 		args[4] = "-c";
 		args[5] = Double.toString(contract.C);
 		args[6] = "-p";
