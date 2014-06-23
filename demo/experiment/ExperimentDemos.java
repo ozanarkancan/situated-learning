@@ -27,7 +27,8 @@ public class ExperimentDemos {
 		//experiment19();
 		//experiment20();
 		//experiment21();
-		experiment22();
+		//experiment22();
+		experiment23();
 	}
 	
 	public static void experiment1(){
@@ -439,6 +440,28 @@ public class ExperimentDemos {
 		AbstractExperiment exp = ExperimentFactory.getInstance().getExperiment(experimentConfigFile);
 		
 		System.out.println("Experiment 22 is running");
+		exp.run();
+		exp = ExperimentFactory.getInstance().getExperiment(experimentConfigFile2);
+		exp.run();
+		exp = ExperimentFactory.getInstance().getExperiment(experimentConfigFile3);
+		exp.run();
+		System.out.println("Experiment has finished.");
+	}
+	
+	public static void experiment23(){
+		/*
+		 * Leave-one-map-out
+		 * Classifier: SVM RBF kernel
+		 * 
+		 * 
+		 * */
+		
+		String experimentConfigFile = "/home/cano/situatedLearning/experiments/macmahon_svmrbf_leaveone_mapout_mixed/experimentConfigFile";
+		String experimentConfigFile2 = "/home/cano/situatedLearning/experiments/macmahon_svmrbf_leaveone_mapout_mixed/experimentConfigFile2";
+		String experimentConfigFile3 = "/home/cano/situatedLearning/experiments/macmahon_svmrbf_leaveone_mapout_mixed/experimentConfigFile3";
+		AbstractExperiment exp = ExperimentFactory.getInstance().getExperiment(experimentConfigFile);
+		
+		System.out.println("Experiment 23 is running");
 		exp.run();
 		exp = ExperimentFactory.getInstance().getExperiment(experimentConfigFile2);
 		exp.run();

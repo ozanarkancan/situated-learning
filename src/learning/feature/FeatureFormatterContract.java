@@ -4,4 +4,5 @@ public class FeatureFormatterContract {
 	public int stateHistory;
 	public int actionHistory;
 	public String vocabularyFileName;
+	public boolean mixed = false;
 }

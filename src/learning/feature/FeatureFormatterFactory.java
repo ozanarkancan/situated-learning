@@ -38,8 +38,14 @@ public class FeatureFormatterFactory {
 		}else if(contract.ngram == 2){
 			dictionary.buildBigram(contract.vocabularyFileName);
 			
-			if(contract.stateHistory == 2)
-				formatter = new SVMBigramStateAndWordsFeatureFormatter(dictionary);
+			if(contract.stateHistory == 2){
+				if(contract.mixed){
+					dictionary.build(contract.vocabularyFileName);
+					formatter = new SVMBigramStateAndWordsMixedFeatureFormatter(dictionary);
+				}
+				else
+					formatter = new SVMBigramStateAndWordsFeatureFormatter(dictionary);
+			}
 			else
 				throw new Exception("Unknown feature formatter");
 		}else

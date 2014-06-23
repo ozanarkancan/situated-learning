@@ -128,6 +128,8 @@ public class ExperimentFactory {
 			contract.actionHistory = Integer.parseInt(params.get("actionHistory"));
 		else
 			throw new Exception("actionHistory is not defined!");
+		if(params.containsKey("mixed"))
+			contract.mixed = true;
 		
 		if(params.containsKey("trainFile"))
 			contract.vocabularyFileName = params.get("trainFile");

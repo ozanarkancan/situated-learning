@@ -20,8 +20,6 @@ public class Dictionary {
 	
 	public void build(String fileName) throws Exception{
 		
-		dict = new HashMap<String, Integer>();
-		
 		BufferedReader reader = new BufferedReader(new FileReader(fileName));
 		String line = "";
 		
@@ -42,8 +40,6 @@ public class Dictionary {
 	}
 	
 	public void buildBigram(String fileName) throws Exception{
-		
-		dict = new HashMap<String, Integer>();
 		
 		BufferedReader reader = new BufferedReader(new FileReader(fileName));
 		String line = "";
