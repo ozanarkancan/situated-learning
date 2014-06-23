@@ -3,7 +3,7 @@ package graph;
 
 public class MacMahonEdge {
 	public enum WallType{
-		butterfly(0), fish(1), tower(2);
+		butterfly(0), fish(1), tower(2), none(3);
 		
 		private final int value;
 	    private WallType(int value) {
@@ -25,7 +25,7 @@ public class MacMahonEdge {
 	}
 	
 	public enum FloorType{
-		blue(0), brick(1), concrete(2), flower(3), grass(4), gravel(5), wood(6), yellow(7);
+		blue(0), brick(1), concrete(2), flower(3), grass(4), gravel(5), wood(6), yellow(7), none(8);
 		
 		private final int value;
 	    private FloorType(int value) {

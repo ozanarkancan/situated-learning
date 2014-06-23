@@ -4,12 +4,12 @@ import graph.MacMahonGraph;
 
 import java.util.HashMap;
 
-public class MacMahonSingleInstructionReaderTest {
+public class MacMahonSingleInstructionReaderDemo {
 
 	public static void main(String[] args) {
 		//testReadMap();
 		testConvertInstructions();
-		testRawText();
+		//testRawText();
 	}
 	
 	public static void testReadMap(){

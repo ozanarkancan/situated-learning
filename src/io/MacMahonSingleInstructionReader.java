@@ -1,7 +1,6 @@
 
 package io;
 
-import edu.berkeley.nlp.tokenizer.PTBTokenizer;
 import graph.MacMahonEdge;
 import graph.MacMahonEdge.FloorType;
 import graph.MacMahonEdge.WallType;
@@ -12,9 +11,7 @@ import graph.MacMahonNode.ObjectType;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.io.StringReader;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Random;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -130,9 +127,7 @@ public class MacMahonSingleInstructionReader {
 					
 					String currFileName = instructionElement.getAttribute("filename");
 					String instruction = instructionElement.getTextContent().trim();
-					PTBTokenizer tokenizer = new edu.berkeley.nlp.tokenizer.PTBTokenizer();
-					tokenizer.setSource(new StringReader(instruction));
-					instruction = list2String(tokenizer.tokenize());
+					instruction = Tokenizer.clean(instruction);
 					
 					String[] pathStr = pathElement.getTextContent()
 							.replace("(", "").replace(")", "")
@@ -218,7 +213,6 @@ public class MacMahonSingleInstructionReader {
 			writerJelly.close();
 			
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -264,44 +258,32 @@ public class MacMahonSingleInstructionReader {
 		state += south == null ? "1 " : "0 ";
 		state += west == null ? "1 " : "0 ";
 		state += ObjectType.objectTypeFeatureString(node.getObjectType()) + " ";
-		state += northNode == null ? nonNodeString() : ObjectType.objectTypeFeatureString(northNode.getObjectType()) + " ";
-		state += eastNode == null ? nonNodeString() : ObjectType.objectTypeFeatureString(eastNode.getObjectType()) + " ";
-		state += southNode == null ? nonNodeString() : ObjectType.objectTypeFeatureString(southNode.getObjectType()) + " ";
-		state += westNode == null ? nonNodeString() : ObjectType.objectTypeFeatureString(westNode.getObjectType()) + " ";
-		state += north == null ? nonEdgeString() : 
+		state += northNode == null ? ObjectType.objectTypeFeatureString(ObjectType.none)  + " "
+				: ObjectType.objectTypeFeatureString(northNode.getObjectType()) + " ";
+		state += eastNode == null ? ObjectType.objectTypeFeatureString(ObjectType.none) + " " 
+				: ObjectType.objectTypeFeatureString(eastNode.getObjectType()) + " ";
+		state += southNode == null ?ObjectType.objectTypeFeatureString(ObjectType.none) + " " 
+				: ObjectType.objectTypeFeatureString(southNode.getObjectType()) + " ";
+		state += westNode == null ? ObjectType.objectTypeFeatureString(ObjectType.none) + " " 
+				: ObjectType.objectTypeFeatureString(westNode.getObjectType()) + " ";
+		state += north == null ? FloorType.floorTypeFeatureString(FloorType.none) + " " 
+				+ WallType.wallTypeFeatureString(WallType.none) + " " : 
 			FloorType.floorTypeFeatureString(north.getFloorType()) + " " + 
 				WallType.wallTypeFeatureString(north.getWallType()) + " ";
-		state += east == null ? nonEdgeString() : 
+		state += east == null ? FloorType.floorTypeFeatureString(FloorType.none)  + " "
+				+ WallType.wallTypeFeatureString(WallType.none) + " ": 
 			FloorType.floorTypeFeatureString(east.getFloorType()) + " " + 
 			WallType.wallTypeFeatureString(east.getWallType()) + " ";
-		state += south == null ? nonEdgeString() : 
+		state += south == null ? FloorType.floorTypeFeatureString(FloorType.none) + " " 
+				+ WallType.wallTypeFeatureString(WallType.none) + " " : 
 			FloorType.floorTypeFeatureString(south.getFloorType()) + " " + 
 			WallType.wallTypeFeatureString(south.getWallType()) + " ";
-		state += west == null ? nonEdgeString() : 
+		state += west == null ? FloorType.floorTypeFeatureString(FloorType.none) + " " 
+				+ WallType.wallTypeFeatureString(WallType.none) + " " : 
 			FloorType.floorTypeFeatureString(west.getFloorType()) + " " + 
 			WallType.wallTypeFeatureString(west.getWallType()) + " ";
 		
 		return state;
-	}
-	
-	private static String nonNodeString(){
-		String nonNodeState = "";
-		
-		for(int i = 0; i < ObjectType.values().length; i++)
-			nonNodeState += "0 ";
-		
-		return nonNodeState;
-	}
-	
-	private static String nonEdgeString(){
-		String nonEdgeState = "";
-		
-		for(int i = 0; i < FloorType.values().length; i++)
-			nonEdgeState += "0 ";
-		for(int i = 0; i < WallType.values().length; i++)
-			nonEdgeState += "0 ";
-		
-		return nonEdgeState;
 	}
 	
 	public static void rawInstructionText(String fileName){
@@ -351,12 +333,5 @@ public class MacMahonSingleInstructionReader {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
-	
-	private static String list2String(List<String> tokens){
-		String str = "";
-		for(String token : tokens)
-			str += token + " ";
-		return str.trim();
 	}
 }
