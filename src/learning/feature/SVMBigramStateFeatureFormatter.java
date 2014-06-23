@@ -11,6 +11,7 @@ public class SVMBigramStateFeatureFormatter extends SVMDictionaryBasedFeatureFor
 	
 	public SVMBigramStateFeatureFormatter(Dictionary dictionary) {
 		super(dictionary);
+		System.out.println("Formatter: SVMBigramStateFeatureFormatter");
 	}
 
 	@Override

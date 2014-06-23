@@ -11,6 +11,7 @@ public class SVMUnigramStateAndWordsFeatureFormatter extends SVMDictionaryBasedF
 
 	public SVMUnigramStateAndWordsFeatureFormatter(Dictionary dictionary) {
 		super(dictionary);
+		System.out.println("Formatter: SVMUnigramStateAndWordsFeatureFormatter");
 	}
 
 	@Override

@@ -1,11 +1,7 @@
 package experiment;
 
-import de.bwaldvogel.liblinear.SolverType;
 import experiments.AbstractExperiment;
-import experiments.CVExperiment;
-import experiments.CumulativeTrainingExperiment;
 import experiments.ExperimentFactory;
-import experiments.SingleExperiment;
 
 public class ExperimentDemos {
 

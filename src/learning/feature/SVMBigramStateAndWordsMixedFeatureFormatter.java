@@ -7,12 +7,13 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 
 import learning.core.Dictionary;
+import utils.Tokenizer;
 
-public class SVMBigramStateAndWordsFeatureFormatter extends SVMDictionaryBasedFeatureFormatter{
+public class SVMBigramStateAndWordsMixedFeatureFormatter extends SVMDictionaryBasedFeatureFormatter{
 	
-	public SVMBigramStateAndWordsFeatureFormatter(Dictionary dictionary) {
+	public SVMBigramStateAndWordsMixedFeatureFormatter(Dictionary dictionary) {
 		super(dictionary);
-		System.out.println("Formatter: SVMBigramStateAndWordsFeatureFormatter");
+		System.out.println("Formatter: SVMBigramStateAndWordsMixedFeatureFormatter");
 	}
 
 	@Override
@@ -31,11 +32,13 @@ public class SVMBigramStateAndWordsFeatureFormatter extends SVMDictionaryBasedFe
 					prevStateInput = null;
 				continue;
 			}
-			String[] words = line.trim().toLowerCase().replace(",", "").split("\\s+");
+			String[] words = Tokenizer.clean(line).split("\\s+");
 			ArrayList<String> bigram = new ArrayList<String>();
-			
-			for(int i = 1; i < words.length; i++)
+			bigram.add(words[0]);
+			for(int i = 1; i < words.length; i++){
+				bigram.add(words[i]);
 				bigram.add(words[i - 1] + words[i]);
+			}
 			String[] conversion = new String[bigram.size()];
 			conversion = bigram.toArray(conversion);
 			String input = bagOfWords(conversion);
