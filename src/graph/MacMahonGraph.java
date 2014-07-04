@@ -1,5 +1,9 @@
 package graph;
 
+import graph.MacMahonEdge.FloorType;
+import graph.MacMahonEdge.WallType;
+import graph.MacMahonNode.ObjectType;
+
 import java.util.HashMap;
 
 public class MacMahonGraph {
@@ -60,6 +64,54 @@ public class MacMahonGraph {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+	
+	public String stateOfNode(MacMahonNode node, int direction){
+		MacMahonNode northNode = getNode(node.getX(), node.getY() - 1);
+		MacMahonEdge north = northNode == null ? null : getEdge(node, northNode);
+		MacMahonNode eastNode = getNode(node.getX() + 1, node.getY());
+		MacMahonEdge east = eastNode == null ? null : getEdge(node, eastNode);
+		MacMahonNode southNode = getNode(node.getX(), node.getY() + 1);
+		MacMahonEdge south = southNode == null ? null : getEdge(node, southNode);
+		MacMahonNode westNode = getNode(node.getX() - 1, node.getY());
+		MacMahonEdge west = westNode == null ? null : getEdge(node, westNode);
+		
+		String state = "";
+		
+		state += north == null ? "1 " : "0 ";
+		state += east == null ? "1 " : "0 ";
+		state += south == null ? "1 " : "0 ";
+		state += west == null ? "1 " : "0 ";
+		state += ObjectType.objectTypeFeatureString(node.getObjectType()) + " ";
+		state += northNode == null ? ObjectType.objectTypeFeatureString(ObjectType.none)  + " "
+				: ObjectType.objectTypeFeatureString(northNode.getObjectType()) + " ";
+		state += eastNode == null ? ObjectType.objectTypeFeatureString(ObjectType.none) + " " 
+				: ObjectType.objectTypeFeatureString(eastNode.getObjectType()) + " ";
+		state += southNode == null ?ObjectType.objectTypeFeatureString(ObjectType.none) + " " 
+				: ObjectType.objectTypeFeatureString(southNode.getObjectType()) + " ";
+		state += westNode == null ? ObjectType.objectTypeFeatureString(ObjectType.none) + " " 
+				: ObjectType.objectTypeFeatureString(westNode.getObjectType()) + " ";
+		state += north == null ? FloorType.floorTypeFeatureString(FloorType.none) + " " 
+				+ WallType.wallTypeFeatureString(WallType.none) + " " : 
+			FloorType.floorTypeFeatureString(north.getFloorType()) + " " + 
+				WallType.wallTypeFeatureString(north.getWallType()) + " ";
+		state += east == null ? FloorType.floorTypeFeatureString(FloorType.none)  + " "
+				+ WallType.wallTypeFeatureString(WallType.none) + " ": 
+			FloorType.floorTypeFeatureString(east.getFloorType()) + " " + 
+			WallType.wallTypeFeatureString(east.getWallType()) + " ";
+		state += south == null ? FloorType.floorTypeFeatureString(FloorType.none) + " " 
+				+ WallType.wallTypeFeatureString(WallType.none) + " " : 
+			FloorType.floorTypeFeatureString(south.getFloorType()) + " " + 
+			WallType.wallTypeFeatureString(south.getWallType()) + " ";
+		state += west == null ? FloorType.floorTypeFeatureString(FloorType.none) + " " 
+				+ WallType.wallTypeFeatureString(WallType.none) + " " : 
+			FloorType.floorTypeFeatureString(west.getFloorType()) + " " + 
+			WallType.wallTypeFeatureString(west.getWallType()) + " ";
+		for(int i = 0; i < 4; i++){
+			state += (i == direction) ? "1 " : "0 ";
+				
+		}
+		return state.trim();
 	}
 
 }

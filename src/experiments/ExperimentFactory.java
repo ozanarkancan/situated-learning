@@ -69,6 +69,27 @@ public class ExperimentFactory {
 						throw new Exception("testFile is not defined!");
 					
 					experiment = new CumulativeTrainingExperiment(configuration);
+				}else if(experimentType.equals("simulation")){
+					if(params.containsKey("testFile"))
+						configuration.testFile = params.get("testFile");
+					else
+						throw new Exception("testFile is not defined!");
+					
+					boolean isThereAnyMapFile = false;
+					
+					for(String key : params.keySet()){
+						if(key.startsWith("mapFile")){
+							isThereAnyMapFile = true;
+							if(configuration.mapFiles == null)
+								configuration.mapFiles = new HashMap<String, String>();
+							configuration.mapFiles.put(key.split("-")[1], params.get(key));
+						}
+					}
+					
+					if(!isThereAnyMapFile)
+						throw new Exception("There is not any map file!");
+					
+					experiment = new SimulationExperiment(configuration);
 				}else
 					throw new Exception("Unknown experimentType");
 				
@@ -128,9 +149,6 @@ public class ExperimentFactory {
 			contract.actionHistory = Integer.parseInt(params.get("actionHistory"));
 		else
 			throw new Exception("actionHistory is not defined!");
-		if(params.containsKey("mixed"))
-			contract.mixed = true;
-		
 		if(params.containsKey("trainFile"))
 			contract.vocabularyFileName = params.get("trainFile");
 		else

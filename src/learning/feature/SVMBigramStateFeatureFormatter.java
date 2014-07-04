@@ -61,4 +61,9 @@ public class SVMBigramStateFeatureFormatter extends SVMDictionaryBasedFeatureFor
 		reader.close();
 		writer.close();
 	}
+
+	@Override
+	public String formatSingleInstance(String instruction, String environment) {
+		return null;
+	}
 }

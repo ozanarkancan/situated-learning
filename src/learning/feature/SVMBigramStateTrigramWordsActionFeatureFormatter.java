@@ -9,13 +9,15 @@ import java.util.ArrayList;
 import utils.Tokenizer;
 import learning.core.Dictionary;
 
-public class SVMBigramStateAndWordsFeatureFormatter extends SVMDictionaryBasedFeatureFormatter{
+public class SVMBigramStateTrigramWordsActionFeatureFormatter extends SVMDictionaryBasedFeatureFormatter{
 	public static String[] prevStateForSingle = null;
+	public static int previousAction = 0;
 	
-	public SVMBigramStateAndWordsFeatureFormatter(Dictionary dictionary) {
+	public SVMBigramStateTrigramWordsActionFeatureFormatter(Dictionary dictionary) {
 		super(dictionary);
+		System.out.println("Formatter: SVMBigramStateTrigramWordsActionFeatureFormatter");
 		prevStateForSingle = null;
-		System.out.println("Formatter: SVMBigramStateAndWordsFeatureFormatter");
+		previousAction = 0;
 	}
 
 	@Override
@@ -27,17 +29,20 @@ public class SVMBigramStateAndWordsFeatureFormatter extends SVMDictionaryBasedFe
 		String line = "";
 		String[] prevStateInput = null;
 		String[] stateInput = null;
+		int prevAction = 0;
 		
 		while((line = reader.readLine()) != null){
 			if(line.equals("") || line.equals("<maze>") || line.equals("</maze>")){
-				if(!line.equals(""))
+				if(!line.equals("")){
 					prevStateInput = null;
+					prevAction = 0;
+				}
 				continue;
 			}
 			String[] words = Tokenizer.clean(line).toLowerCase().trim().split("\\s+");
 			ArrayList<String> bigram = new ArrayList<String>();
 			
-			for(int i = 1; i <= 2; i++){
+			for(int i = 1; i <= 3; i++){
 				for(int j = 0; j <= words.length - i; j++){
 					String word = "";
 					for(int k = j; k < j + i; k++)
@@ -68,12 +73,18 @@ public class SVMBigramStateAndWordsFeatureFormatter extends SVMDictionaryBasedFe
 						+ Integer.parseInt(stateInput[prevStateInput.length - 1])) + ":1 ";
 			}
 			else
-				input += Integer.toString(dictionary.size() + 1 + 2 * (stateInput.length - 1) + 8 + 1) + ":1";
+				input += Integer.toString(dictionary.size() + 1 + 2 * (stateInput.length - 1) + 8 + 1) + ":1 ";
+			
+			for(int i = 0; i < 4; i++){
+				String act = i == prevAction ? ":1 " : ":0 ";
+				input += Integer.toString(dictionary.size() + 1 + 2 * (stateInput.length - 1) + 8 + 2 + i) + act;
+			}
 			
 			String output = reader.readLine().trim();
 			writer.append(output + " " + input + "\n").flush();
 			
 			prevStateInput = stateInput.clone();
+			prevAction = Integer.parseInt(output);
 		}
 		
 		reader.close();
@@ -86,7 +97,7 @@ public class SVMBigramStateAndWordsFeatureFormatter extends SVMDictionaryBasedFe
 		String[] words = Tokenizer.clean(instruction).toLowerCase().trim().split("\\s+");
 		ArrayList<String> bigram = new ArrayList<String>();
 		
-		for(int i = 1; i <= 2; i++){
+		for(int i = 1; i <= 3; i++){
 			for(int j = 0; j <= words.length - i; j++){
 				String word = "";
 				for(int k = j; k < j + i; k++)
@@ -117,6 +128,11 @@ public class SVMBigramStateAndWordsFeatureFormatter extends SVMDictionaryBasedFe
 		}
 		else
 			formatted += Integer.toString(dictionary.size() + 1 + 2 * (stateInput.length - 1) + 8 + 1) + ":1";
+		
+		for(int i = 0; i < 4; i++){
+			String act = i == previousAction ? ":1 " : ":0 ";
+			formatted += Integer.toString(dictionary.size() + 1 + 2 * (stateInput.length - 1) + 8 + 2 + i) + act;
+		}
 		prevStateForSingle = stateInput;
 		
 		return formatted;

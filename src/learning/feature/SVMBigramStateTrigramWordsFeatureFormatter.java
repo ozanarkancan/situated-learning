@@ -9,13 +9,13 @@ import java.util.ArrayList;
 import utils.Tokenizer;
 import learning.core.Dictionary;
 
-public class SVMBigramStateAndWordsFeatureFormatter extends SVMDictionaryBasedFeatureFormatter{
+public class SVMBigramStateTrigramWordsFeatureFormatter extends SVMDictionaryBasedFeatureFormatter{
 	public static String[] prevStateForSingle = null;
 	
-	public SVMBigramStateAndWordsFeatureFormatter(Dictionary dictionary) {
+	public SVMBigramStateTrigramWordsFeatureFormatter(Dictionary dictionary) {
 		super(dictionary);
-		prevStateForSingle = null;
-		System.out.println("Formatter: SVMBigramStateAndWordsFeatureFormatter");
+		System.out.println("Formatter: SVMBigramStateTrigramWordsFeatureFormatter");
+		 prevStateForSingle = null;
 	}
 
 	@Override
@@ -37,7 +37,7 @@ public class SVMBigramStateAndWordsFeatureFormatter extends SVMDictionaryBasedFe
 			String[] words = Tokenizer.clean(line).toLowerCase().trim().split("\\s+");
 			ArrayList<String> bigram = new ArrayList<String>();
 			
-			for(int i = 1; i <= 2; i++){
+			for(int i = 1; i <= 3; i++){
 				for(int j = 0; j <= words.length - i; j++){
 					String word = "";
 					for(int k = j; k < j + i; k++)
@@ -86,7 +86,7 @@ public class SVMBigramStateAndWordsFeatureFormatter extends SVMDictionaryBasedFe
 		String[] words = Tokenizer.clean(instruction).toLowerCase().trim().split("\\s+");
 		ArrayList<String> bigram = new ArrayList<String>();
 		
-		for(int i = 1; i <= 2; i++){
+		for(int i = 1; i <= 3; i++){
 			for(int j = 0; j <= words.length - i; j++){
 				String word = "";
 				for(int k = j; k < j + i; k++)

@@ -75,12 +75,16 @@ public class GridSearch {
 						}
 						
 						avgAccuracy /= 5;
-						
+						Runtime.getRuntime().exec("clear");
 						if(avgAccuracy > maxAcc){
 							maxAcc = avgAccuracy;
 							results[0] = gamma;
 							results[1] = c;
 							results[2] = epsilon;
+							System.out.print("Acc: " + maxAcc);
+							System.out.print("\tC: " + c);
+							System.out.print("\tEpsilon: " + epsilon);
+							System.out.println("\tGamma: " + gamma);
 						}
 					}
 				}

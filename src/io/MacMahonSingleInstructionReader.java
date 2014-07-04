@@ -1,21 +1,12 @@
-
 package io;
 
-import graph.MacMahonEdge;
-import graph.MacMahonEdge.FloorType;
-import graph.MacMahonEdge.WallType;
-import graph.MacMahonGraph;
-import graph.MacMahonNode;
-import graph.MacMahonNode.ObjectType;
-
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
-import java.util.HashMap;
 import java.util.Random;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+
+import learning.instance.SingleInstruction;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -25,313 +16,84 @@ import org.w3c.dom.NodeList;
 import utils.Tokenizer;
 
 public class MacMahonSingleInstructionReader {
+	private NodeList examples;
+	private int index = 0;
 	
-	public static MacMahonGraph readMap(String fileName){
-		MacMahonGraph map = null;
-		File mapFile = new File(fileName);
-		
-		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder dBuilder;
-		try {
-			dBuilder = dbFactory.newDocumentBuilder();
-			Document doc = dBuilder.parse(mapFile);
-			//doc.getDocumentElement().normalize();
-			Node root = doc.getDocumentElement();
-			String mapName = ((Element)root).getAttribute("name");
-			
-			map = new MacMahonGraph();
-			map.setName(mapName);
-			
-			NodeList nodes = ((Element)root).getElementsByTagName("nodes").item(0).getChildNodes();
-			NodeList edges = ((Element)root).getElementsByTagName("edges").item(0).getChildNodes();
-			
-			for(int i = 0; i < nodes.getLength(); i++){
-				Node node = nodes.item(i);
-				if(node.getNodeType() == Node.ELEMENT_NODE){
-					Element elem = (Element)node;
-					
-					int x = Integer.parseInt(elem.getAttribute("x"));
-					int y = Integer.parseInt(elem.getAttribute("y"));
-					String objType = elem.getAttribute("item");
-					
-					MacMahonNode mapNode;
-					
-					if(!objType.equals("")){
-						ObjectType objectType = ObjectType.valueOf(objType);
-						mapNode = new MacMahonNode(x, y, objectType);
-					}else
-						mapNode = new MacMahonNode(x, y, ObjectType.none);
-					
-					map.setNode(x, y, mapNode);
-				}
-			}
-			
-			for(int i = 0; i < edges.getLength(); i++){
-				Node node = edges.item(i);
-				if(node.getNodeType() == Node.ELEMENT_NODE){
-					Element elem = (Element)node;
-					int sourceX = Integer.parseInt(elem.getAttribute("node1").split(",")[0]);
-					int sourceY = Integer.parseInt(elem.getAttribute("node1").split(",")[1]);
-					int targetX = Integer.parseInt(elem.getAttribute("node2").split(",")[0]);
-					int targetY = Integer.parseInt(elem.getAttribute("node2").split(",")[1]);
-					FloorType floorType = FloorType.valueOf(elem.getAttribute("floor"));
-					WallType wallType = WallType.valueOf(elem.getAttribute("wall"));
-					
-					MacMahonNode source = map.getNode(sourceX, sourceY);
-					MacMahonNode target = map.getNode(targetX, targetY); 
-					MacMahonEdge edge = new MacMahonEdge(source, target, wallType, floorType);
-					MacMahonEdge revEdge = new MacMahonEdge(target, source, wallType, floorType);
-					
-					map.setEdge(source, target, edge);
-					map.setEdge(target, source, revEdge);
-				}
-			}
-			
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return map;
-	}
-	
-	public static void convertInstructionsToAIKUFormat(HashMap<String, MacMahonGraph> maps, String fileName){
+	public MacMahonSingleInstructionReader(String fileName){
 		File singleIns = new File(fileName);
 		
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder dBuilder;
+		
 		try {
-			BufferedWriter writerGrid = new BufferedWriter(new FileWriter(fileName + ".grid"));
-			BufferedWriter writerJelly = new BufferedWriter(new FileWriter(fileName + ".jelly"));
-			BufferedWriter writerL = new BufferedWriter(new FileWriter(fileName + ".l"));
-			
-			BufferedWriter writer = null;
-			BufferedWriter prevWriter = null;
-			
 			dBuilder = dbFactory.newDocumentBuilder();
 			Document doc = dBuilder.parse(singleIns);
-			//doc.getDocumentElement().normalize();
-			Node root = doc.getDocumentElement();
-			NodeList examples = root.getChildNodes();
-			String prevFileName = "";
 			
-			for(int i = 0; i < examples.getLength(); i++){
-				Node node = examples.item(i);
-				if(node.getNodeType() == Node.ELEMENT_NODE){
-					Element elem = (Element)node;
-					
-					String mapName = elem.getAttribute("map");
-					MacMahonGraph map = maps.get(mapName);
-					Element instructionElement = (Element)(elem.getElementsByTagName("instruction").item(0));
-					Element pathElement = (Element)(elem.getElementsByTagName("path").item(0));
-					
-					String currFileName = instructionElement.getAttribute("filename");
-					String instruction = instructionElement.getTextContent().trim();
-					instruction = Tokenizer.clean(instruction);
-					
-					String[] pathStr = pathElement.getTextContent()
-							.replace("(", "").replace(")", "")
-							.replace("[", "").replace("]", "")
-							.replace(",", "").trim().split("\\s+");
-					
-					prevWriter = writer;
-					
-					if(mapName.equals("Grid"))
-						writer = writerGrid;
-					else if(mapName.equals("L"))
-						writer = writerL;
-					else
-						writer = writerJelly;
-					
-					if(prevFileName.equals(""))
-					{
-						writer.append("<maze>\n");
-						prevFileName = currFileName;
-					}else if(!currFileName.equals(prevFileName)){
-						prevWriter.append("</maze>\n").flush();
-						writer.append("<maze>\n");
-						prevFileName = currFileName;
-					}
-					
-					int movementType = -1;
-					for(int j = 3; j < pathStr.length; j = j + 3){
-						MacMahonNode prevNode = maps.get(mapName)
-								.getNode(Integer.parseInt(pathStr[j - 3])
-										, Integer.parseInt(pathStr[j - 2]));
-						int prevDirection = Integer.parseInt(pathStr[j - 1]);
-						prevDirection = prevDirection == -1 ? new Random().nextInt(4) * 90 : prevDirection;
-						
-						MacMahonNode currNode = map
-								.getNode(Integer.parseInt(pathStr[j])
-										, Integer.parseInt(pathStr[j + 1]));
-						int currentDirection = Integer.parseInt(pathStr[j + 2]);
-						
-						movementType = getMovementType(prevNode, currNode, prevDirection, currentDirection);
-						
-						if(movementType > 1 && pathStr[j - 1].equals("-1")){
-							while(prevDirection != currentDirection){
-								writer.append(instruction + "\n");
-								writer.append(stateOfNode(currNode, map, prevDirection));
-								writer.append(Integer.toString(prevDirection / 90) + "\n");
-								writer.append(Integer.toString(movementType) + "\n\n").flush();
-								if(movementType == 2){
-									if(prevDirection == 0)
-										prevDirection = 270;
-									else
-										prevDirection -= 90;
-								}else{
-									if(prevDirection == 270)
-										prevDirection = 0;
-									else
-										prevDirection += 90;
-								}
-							}
-						}else{
-							writer.append(instruction + "\n");
-							writer.append(stateOfNode(currNode, map, prevDirection));
-							writer.append(Integer.toString(prevDirection / 90) + "\n");
-							writer.append(Integer.toString(movementType) + "\n\n").flush();
-						}
-					}
-					
-					if(movementType != 0){
-					
-						MacMahonNode currNode = map
-								.getNode(Integer.parseInt(pathStr[pathStr.length - 3])
-										, Integer.parseInt(pathStr[pathStr.length - 2]));
-						int currentDirection = Integer.parseInt(pathStr[pathStr.length - 1]);
-						writer.append(instruction + "\n");
-						writer.append(stateOfNode(currNode, map, currentDirection));
-						writer.append(Integer.toString(currentDirection / 90) + "\n");
-						writer.append("0\n\n").flush();
-					}
-				}
-			}
-			writer.append("</maze>");
-			writerGrid.close();
-			writerL.close();
-			writerJelly.close();
+			Node root = doc.getDocumentElement();
+			examples = root.getChildNodes();
 			
 		} catch (Exception e) {
-			e.printStackTrace();
 		}
 	}
 	
-	private static int getMovementType(MacMahonNode prev, MacMahonNode curr, int prevDirection, int currentDirection){
-		int movementType = -1;
+	public SingleInstruction nextInstruction(){
+		Node node = null;
+		do{
+			if(index >= examples.getLength())
+				break;
+			node = examples.item(index);
+			index++;
+		}while(node.getNodeType() != Node.ELEMENT_NODE);
 		
-		if(prev.equals(curr) && prevDirection == currentDirection)
-			movementType = 0;
-		else if(prev.getX() != curr.getX() || prev.getY() != curr.getY())
-			movementType = 1;
-		else
-			movementType = turnDirection(prevDirection, currentDirection);
-		
-		return movementType;
-	}
-	
-	private static int turnDirection(int prevDirection, int currentDirection){
-		if(prevDirection == 270 && currentDirection == 0)
-			return 3;//right
-		else if(prevDirection < currentDirection){
-			return 3;//right
-		}else if(prevDirection == currentDirection)
-			return 0;//stop
-		else
-			return 2;//left
-	}
-	
-	private static String stateOfNode(MacMahonNode node, MacMahonGraph map, int direction){
-		MacMahonNode northNode = map.getNode(node.getX(), node.getY() - 1);
-		MacMahonEdge north = northNode == null ? null : map.getEdge(node, northNode);
-		MacMahonNode eastNode = map.getNode(node.getX() + 1, node.getY());
-		MacMahonEdge east = eastNode == null ? null : map.getEdge(node, eastNode);
-		MacMahonNode southNode = map.getNode(node.getX(), node.getY() + 1);
-		MacMahonEdge south = southNode == null ? null : map.getEdge(node, southNode);
-		MacMahonNode westNode = map.getNode(node.getX() - 1, node.getY());
-		MacMahonEdge west = westNode == null ? null : map.getEdge(node, westNode);
-		
-		String state = "";
-		
-		state += north == null ? "1 " : "0 ";
-		state += east == null ? "1 " : "0 ";
-		state += south == null ? "1 " : "0 ";
-		state += west == null ? "1 " : "0 ";
-		state += ObjectType.objectTypeFeatureString(node.getObjectType()) + " ";
-		state += northNode == null ? ObjectType.objectTypeFeatureString(ObjectType.none)  + " "
-				: ObjectType.objectTypeFeatureString(northNode.getObjectType()) + " ";
-		state += eastNode == null ? ObjectType.objectTypeFeatureString(ObjectType.none) + " " 
-				: ObjectType.objectTypeFeatureString(eastNode.getObjectType()) + " ";
-		state += southNode == null ?ObjectType.objectTypeFeatureString(ObjectType.none) + " " 
-				: ObjectType.objectTypeFeatureString(southNode.getObjectType()) + " ";
-		state += westNode == null ? ObjectType.objectTypeFeatureString(ObjectType.none) + " " 
-				: ObjectType.objectTypeFeatureString(westNode.getObjectType()) + " ";
-		state += north == null ? FloorType.floorTypeFeatureString(FloorType.none) + " " 
-				+ WallType.wallTypeFeatureString(WallType.none) + " " : 
-			FloorType.floorTypeFeatureString(north.getFloorType()) + " " + 
-				WallType.wallTypeFeatureString(north.getWallType()) + " ";
-		state += east == null ? FloorType.floorTypeFeatureString(FloorType.none)  + " "
-				+ WallType.wallTypeFeatureString(WallType.none) + " ": 
-			FloorType.floorTypeFeatureString(east.getFloorType()) + " " + 
-			WallType.wallTypeFeatureString(east.getWallType()) + " ";
-		state += south == null ? FloorType.floorTypeFeatureString(FloorType.none) + " " 
-				+ WallType.wallTypeFeatureString(WallType.none) + " " : 
-			FloorType.floorTypeFeatureString(south.getFloorType()) + " " + 
-			WallType.wallTypeFeatureString(south.getWallType()) + " ";
-		state += west == null ? FloorType.floorTypeFeatureString(FloorType.none) + " " 
-				+ WallType.wallTypeFeatureString(WallType.none) + " " : 
-			FloorType.floorTypeFeatureString(west.getFloorType()) + " " + 
-			WallType.wallTypeFeatureString(west.getWallType()) + " ";
-		
-		return state;
-	}
-	
-	public static void rawInstructionText(String fileName){
-		File singleIns = new File(fileName);
-		
-		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder dBuilder;
-		try {
-			BufferedWriter writerGrid = new BufferedWriter(new FileWriter(fileName + ".gridraw"));
-			BufferedWriter writerJelly = new BufferedWriter(new FileWriter(fileName + ".jellyraw"));
-			BufferedWriter writerL = new BufferedWriter(new FileWriter(fileName + ".lraw"));
+		if(node == null)
+			return null;
+		else{
+			SingleInstruction singleInstruction = new SingleInstruction();
+			Element elem = (Element)node;
+			singleInstruction.mapName = elem.getAttribute("map");
+			Element instructionElement = (Element)(elem.getElementsByTagName("instruction").item(0));
+			Element pathElement = (Element)(elem.getElementsByTagName("path").item(0));
+			singleInstruction.instruction = Tokenizer.clean(instructionElement.getTextContent().trim());
+			singleInstruction.fileName = instructionElement.getAttribute("filename");
 			
-			BufferedWriter writer = null;
+			String[] pathStr = pathElement.getTextContent()
+					.replace("(", "").replace(")", "")
+					.replace("[", "").replace("]", "")
+					.replace(",", "").trim().split("\\s+");
 			
-			dBuilder = dbFactory.newDocumentBuilder();
-			Document doc = dBuilder.parse(singleIns);
-			Node root = doc.getDocumentElement();
-			NodeList examples = root.getChildNodes();
+			singleInstruction.startX = Integer.parseInt(pathStr[0]);
+			singleInstruction.startY = Integer.parseInt(pathStr[1]);
+			int orientation = Integer.parseInt(pathStr[2]);
 			
-			for(int i = 0; i < examples.getLength(); i++){
-				Node node = examples.item(i);
-				if(node.getNodeType() == Node.ELEMENT_NODE){
-					Element elem = (Element)node;
+			if(orientation == -1){
+				if(pathStr.length > 3){
+					int rand = new Random().nextInt(2);
+					int nextDirection = Integer.parseInt(pathStr[5]);
 					
-					String mapName = elem.getAttribute("map");;
-					Element instructionElement = (Element)(elem.getElementsByTagName("instruction").item(0));
-					
-					String instruction = instructionElement.getTextContent().trim();
-					instruction = Tokenizer.clean(instruction);
-					
-					if(mapName.equals("Grid"))
-						writer = writerGrid;
-					else if(mapName.equals("L"))
-						writer = writerL;
-					else
-						writer = writerJelly;
-					
-					writer.append("<s> ").append(instruction.toLowerCase()).append(" </s>").append("\n");
-					writer.flush();
-				}
+					if(rand == 0){
+						orientation = nextDirection == 0 ? 270 : nextDirection - 90;
+					}else{
+						orientation = nextDirection == 270 ? 0 : nextDirection + 90;
+					}
+				}else
+					orientation = new Random().nextInt(4) * 90;
 			}
-			writerGrid.close();
-			writerL.close();
-			writerJelly.close();
 			
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			singleInstruction.startOrientation = orientation / 90;
+			
+			singleInstruction.endX = Integer.parseInt(pathStr[pathStr.length - 3]);
+			singleInstruction.endY = Integer.parseInt(pathStr[pathStr.length - 2]);
+			orientation = Integer.parseInt(pathStr[pathStr.length - 1]);
+			singleInstruction.endOrientation = orientation == -1 ? singleInstruction.startOrientation
+					: orientation / 90;
+			
+			return singleInstruction;
 		}
 	}
+	
+	public boolean hasInstruction(){
+		return index < examples.getLength();
+	}
+	
+	
 }

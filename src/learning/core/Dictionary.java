@@ -6,6 +6,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.HashMap;
 
+import utils.Tokenizer;
+
 public class Dictionary {
 	private static Dictionary builded = null;
 	private HashMap<String, Integer> dict;
@@ -18,40 +20,25 @@ public class Dictionary {
 		return builded;
 	}
 	
-	public void build(String fileName) throws Exception{
+	public void build(String fileName, int ngram) throws Exception{
 		
 		BufferedReader reader = new BufferedReader(new FileReader(fileName));
 		String line = "";
 		
 		while((line = reader.readLine()) != null){
-			if(line.equals(""))
+			if(line.equals("") || line.equals("<maze>") || line.equals("</maze>"))
 				continue;
 			
-			String[] words = line.trim().toLowerCase().replace(",", "").split("\\s+");
-			for(String word : words)
-				if(!dict.containsKey(word))
-					dict.put(word, dict.size() + 1);
-			line = reader.readLine();
-			line = reader.readLine();
-		}
-		
-		reader.close();
-		builded = this;
-	}
-	
-	public void buildBigram(String fileName) throws Exception{
-		
-		BufferedReader reader = new BufferedReader(new FileReader(fileName));
-		String line = "";
-		
-		while((line = reader.readLine()) != null){
-			if(line.equals(""))
-				continue;
-			
-			String[] words = line.trim().toLowerCase().replace(",", "").split("\\s+");
-			for(int i = 1; i < words.length; i++)
-				if(!dict.containsKey(words[i - 1] + words[i]))
-					dict.put(words[i - 1] + words[i], dict.size() + 1);
+			String[] words = Tokenizer.clean(line).toLowerCase().trim().split("\\s+");
+			for(int i = 1; i <= ngram; i++){
+				for(int j = 0; j <= words.length - i; j++){
+					String word = "";
+					for(int k = j; k < j + i; k++)
+						word += words[k];
+					if(!dict.containsKey(word))
+						dict.put(word, dict.size() + 1);
+				}
+			}
 			line = reader.readLine();
 			line = reader.readLine();
 		}

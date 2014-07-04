@@ -36,6 +36,7 @@ public class Evaluator {
 		String predictionLine = "";
 		
 		int lineIndex = 1;
+		int singleInstructionIndex = 1;
 		boolean isActionCorrect = true;
 		
 		while((testLine = testReader.readLine()) != null){
@@ -51,7 +52,7 @@ public class Evaluator {
 				correct++;
 			else{
 				miss++;
-				missClassified.add(lineIndex);
+				//missClassified.add(lineIndex);
 				isActionCorrect = false;
 			}
 			
@@ -70,10 +71,13 @@ public class Evaluator {
 			if(real == 0){
 				if(isActionCorrect)
 					correctAction++;
-				else
+				else{
 					missAction++;
+					missClassified.add(singleInstructionIndex);
+				}
 				
 				isActionCorrect = true;
+				singleInstructionIndex++;
 			}
 			
 			lineIndex++;
@@ -89,6 +93,18 @@ public class Evaluator {
 	
 	public double actionAccuracy(){
 		return correctAction/(correctAction+missAction);
+	}
+	
+	public void increaseCorrectAtomicAction(){
+		correct++;
+	}
+	
+	public void increaseMissedAtomicAction(){
+		miss++;
+	}
+	
+	public void addMissClassified(int index){
+		missClassified.add(index);
 	}
 	
 	public void printAtomicActionAccuracy(){
@@ -177,9 +193,23 @@ public class Evaluator {
 	}
 	
 	public void printMissClassifiedInstances(){
-		System.out.println("Indexes of missclassified instances: ");
-		for(int index : missClassified)
-			System.out.println(index);
+		if(this.outputFile == null){
+			System.out.println("Indexes of missclassified instances: ");
+			for(int index : missClassified)
+				System.out.println(index);
+		}else{
+			try{
+				BufferedWriter writer = new BufferedWriter(new FileWriter(this.outputFile, true));
+				writer.append("Indexes of missclassified instances: \n");
+				
+				for(int index : missClassified)
+					writer.append(Integer.toString(index)).append("\n");
+				writer.append("\n").flush();
+				writer.close();
+			}catch(Exception ex){
+				ex.printStackTrace();
+			}
+		}
 	}
 
 }

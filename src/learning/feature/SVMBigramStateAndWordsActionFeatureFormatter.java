@@ -9,13 +9,15 @@ import java.util.ArrayList;
 import utils.Tokenizer;
 import learning.core.Dictionary;
 
-public class SVMBigramStateAndWordsFeatureFormatter extends SVMDictionaryBasedFeatureFormatter{
+public class SVMBigramStateAndWordsActionFeatureFormatter extends SVMDictionaryBasedFeatureFormatter{
 	public static String[] prevStateForSingle = null;
+	public static int previousAction = 0;
 	
-	public SVMBigramStateAndWordsFeatureFormatter(Dictionary dictionary) {
+	public SVMBigramStateAndWordsActionFeatureFormatter(Dictionary dictionary) {
 		super(dictionary);
+		System.out.println("Formatter: SVMBigramStateAndWordsActionFeatureFormatter");
 		prevStateForSingle = null;
-		System.out.println("Formatter: SVMBigramStateAndWordsFeatureFormatter");
+		previousAction = 0;
 	}
 
 	@Override
@@ -27,11 +29,14 @@ public class SVMBigramStateAndWordsFeatureFormatter extends SVMDictionaryBasedFe
 		String line = "";
 		String[] prevStateInput = null;
 		String[] stateInput = null;
+		int prevAction = 0;
 		
 		while((line = reader.readLine()) != null){
 			if(line.equals("") || line.equals("<maze>") || line.equals("</maze>")){
-				if(!line.equals(""))
+				if(!line.equals("")){
 					prevStateInput = null;
+					prevAction = 0;
+				}
 				continue;
 			}
 			String[] words = Tokenizer.clean(line).toLowerCase().trim().split("\\s+");
@@ -68,12 +73,18 @@ public class SVMBigramStateAndWordsFeatureFormatter extends SVMDictionaryBasedFe
 						+ Integer.parseInt(stateInput[prevStateInput.length - 1])) + ":1 ";
 			}
 			else
-				input += Integer.toString(dictionary.size() + 1 + 2 * (stateInput.length - 1) + 8 + 1) + ":1";
+				input += Integer.toString(dictionary.size() + 1 + 2 * (stateInput.length - 1) + 8 + 1) + ":1 ";
+			
+			for(int i = 0; i < 4; i++){
+				String act = i == prevAction ? ":1 " : ":0 ";
+				input += Integer.toString(dictionary.size() + 1 + 2 * (stateInput.length - 1) + 8 + 2 + i) + act;
+			}
 			
 			String output = reader.readLine().trim();
 			writer.append(output + " " + input + "\n").flush();
 			
 			prevStateInput = stateInput.clone();
+			prevAction = Integer.parseInt(output);
 		}
 		
 		reader.close();
@@ -117,6 +128,11 @@ public class SVMBigramStateAndWordsFeatureFormatter extends SVMDictionaryBasedFe
 		}
 		else
 			formatted += Integer.toString(dictionary.size() + 1 + 2 * (stateInput.length - 1) + 8 + 1) + ":1";
+		
+		for(int i = 0; i < 4; i++){
+			String act = i == previousAction ? ":1 " : ":0 ";
+			formatted += Integer.toString(dictionary.size() + 1 + 2 * (stateInput.length - 1) + 8 + 2 + i) + act;
+		}
 		prevStateForSingle = stateInput;
 		
 		return formatted;

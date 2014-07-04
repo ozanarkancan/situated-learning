@@ -41,6 +41,11 @@ public class SVMUnigramStateAndWordsFeatureFormatter extends SVMDictionaryBasedF
 		reader.close();
 		writer.close();
 	}
+
+	@Override
+	public String formatSingleInstance(String instruction, String environment) {
+		return null;
+	}
 	
 
 }

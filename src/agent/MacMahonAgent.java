@@ -18,6 +18,18 @@ public class MacMahonAgent {
 		this.orientation = orientation;
 	}
 	
+	public int getX(){
+		return x;
+	}
+	
+	public int getY(){
+		return y;
+	}
+	
+	public int getOrientation(){
+		return orientation;
+	}
+	
 	public void setLocation(int x, int y){
 		this.x = x;
 		this.y = y;
@@ -35,7 +47,7 @@ public class MacMahonAgent {
 		return this.orientation == orientation;
 	}
 	
-	public boolean move(){
+	public void move(){
 		switch (orientation) {
 		case 0:
 			y--;
@@ -50,8 +62,6 @@ public class MacMahonAgent {
 			x--;
 			break;
 		}
-		
-		return x < 0 || y < 0;
 	}
 	
 	public void turnLeft(){

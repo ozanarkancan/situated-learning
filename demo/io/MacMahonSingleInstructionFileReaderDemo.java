@@ -4,17 +4,23 @@ import graph.MacMahonGraph;
 
 import java.util.HashMap;
 
-public class MacMahonSingleInstructionReaderDemo {
+public class MacMahonSingleInstructionFileReaderDemo {
 
 	public static void main(String[] args) {
 		//testReadMap();
 		testConvertInstructions();
 		//testRawText();
+		//testSplitFile();
+	}
+	
+	public static void testSplitFile(){
+		String fileName = "/home/cano/situatedLearning//LearningNavigationInstructions/data/SingleSentence.xml";
+		MacMahonSingleInstructionFileReader.splitInstructionToRelatedMap(fileName);
 	}
 	
 	public static void testReadMap(){
 		String fileName = "/home/cano/situatedLearning/LearningNavigationInstructions/maps/map-grid.xml";
-		MacMahonSingleInstructionReader.readMap(fileName);
+		MacMahonSingleInstructionFileReader.readMap(fileName);
 	}
 	
 	public static void testConvertInstructions(){
@@ -24,17 +30,17 @@ public class MacMahonSingleInstructionReaderDemo {
 		String fileName = "/home/cano/situatedLearning/LearningNavigationInstructions/data/SingleSentence.xml";
 		
 		HashMap<String, MacMahonGraph> maps = new HashMap<String, MacMahonGraph>();
-		maps.put("Grid", MacMahonSingleInstructionReader.readMap(grid));
-		maps.put("L", MacMahonSingleInstructionReader.readMap(l));
-		maps.put("Jelly", MacMahonSingleInstructionReader.readMap(jelly));
+		maps.put("Grid", MacMahonSingleInstructionFileReader.readMap(grid));
+		maps.put("L", MacMahonSingleInstructionFileReader.readMap(l));
+		maps.put("Jelly", MacMahonSingleInstructionFileReader.readMap(jelly));
 		
 		
-		MacMahonSingleInstructionReader.convertInstructionsToAIKUFormat(maps, fileName);
+		MacMahonSingleInstructionFileReader.convertInstructionsToAIKUFormat(maps, fileName);
 	}
 	
 	public static void testRawText(){
 		String fileName = "/home/cano/situatedLearning/experiments/corpussimilarity/SingleSentence.xml";
-		MacMahonSingleInstructionReader.rawInstructionText(fileName);
+		MacMahonSingleInstructionFileReader.rawInstructionText(fileName);
 	}
 
 }
