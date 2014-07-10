@@ -81,11 +81,12 @@ public class GridSearch {
 							results[0] = gamma;
 							results[1] = c;
 							results[2] = epsilon;
-							System.out.print("Acc: " + maxAcc);
-							System.out.print("\tC: " + c);
-							System.out.print("\tEpsilon: " + epsilon);
-							System.out.println("\tGamma: " + gamma);
 						}
+						
+						System.out.print("Acc: " + maxAcc);
+						System.out.print("\tC: " + results[1]);
+						System.out.print("\tEpsilon: " + results[2]);
+						System.out.println("\tGamma: " + results[0]);
 					}
 				}
 			}

@@ -31,9 +31,9 @@ public class ExperimentDemos {
 		//experiment23();
 		//experiment24();
 		//experiment25();
-		experiment26();
-		experiment27();
-		experiment28();
+		//experiment26();
+		//experiment27();
+		//experiment28();
 	}
 	
 	public static void experiment1(){
