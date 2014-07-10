@@ -40,7 +40,6 @@ public class MacMahonSingleInstructionFileReader {
 		try {
 			dBuilder = dbFactory.newDocumentBuilder();
 			Document doc = dBuilder.parse(mapFile);
-			//doc.getDocumentElement().normalize();
 			Node root = doc.getDocumentElement();
 			String mapName = ((Element)root).getAttribute("name");
 			

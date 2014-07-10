@@ -76,8 +76,8 @@ public class SVMBigramStateAndWordsActionFeatureFormatter extends SVMDictionaryB
 				input += Integer.toString(dictionary.size() + 1 + 2 * (stateInput.length - 1) + 8 + 1) + ":1 ";
 			
 			for(int i = 0; i < 4; i++){
-				String act = i == prevAction ? ":1 " : ":0 ";
-				input += Integer.toString(dictionary.size() + 1 + 2 * (stateInput.length - 1) + 8 + 2 + i) + act;
+				if(i == prevAction)
+					input += Integer.toString(dictionary.size() + 1 + 2 * (stateInput.length - 1) + 8 + 2 + i) + ":1 ";
 			}
 			
 			String output = reader.readLine().trim();
@@ -127,11 +127,11 @@ public class SVMBigramStateAndWordsActionFeatureFormatter extends SVMDictionaryB
 					+ Integer.parseInt(stateInput[prevStateForSingle.length - 1])) + ":1 ";
 		}
 		else
-			formatted += Integer.toString(dictionary.size() + 1 + 2 * (stateInput.length - 1) + 8 + 1) + ":1";
+			formatted += Integer.toString(dictionary.size() + 1 + 2 * (stateInput.length - 1) + 8 + 1) + ":1 ";
 		
 		for(int i = 0; i < 4; i++){
-			String act = i == previousAction ? ":1 " : ":0 ";
-			formatted += Integer.toString(dictionary.size() + 1 + 2 * (stateInput.length - 1) + 8 + 2 + i) + act;
+			if(i == previousAction)
+				formatted += Integer.toString(dictionary.size() + 1 + 2 * (stateInput.length - 1) + 8 + 2 + i) + ":1 ";
 		}
 		prevStateForSingle = stateInput;
 		

@@ -10,11 +10,11 @@ public class MacMahonSingleInstructionFileReaderDemo {
 		//testReadMap();
 		testConvertInstructions();
 		//testRawText();
-		//testSplitFile();
+		testSplitFile();
 	}
 	
 	public static void testSplitFile(){
-		String fileName = "/home/cano/situatedLearning//LearningNavigationInstructions/data/SingleSentence.xml";
+		String fileName = "/home/cano/situatedLearning/data/SingleSentence.xml";
 		MacMahonSingleInstructionFileReader.splitInstructionToRelatedMap(fileName);
 	}
 	
@@ -24,10 +24,10 @@ public class MacMahonSingleInstructionFileReaderDemo {
 	}
 	
 	public static void testConvertInstructions(){
-		String grid = "/home/cano/situatedLearning/LearningNavigationInstructions/maps/map-grid.xml";
-		String l = "/home/cano/situatedLearning/LearningNavigationInstructions/maps/map-l.xml";
-		String jelly = "/home/cano/situatedLearning/LearningNavigationInstructions/maps/map-jelly.xml";
-		String fileName = "/home/cano/situatedLearning/LearningNavigationInstructions/data/SingleSentence.xml";
+		String grid = "/home/cano/situatedLearning/data/map-grid.xml";
+		String l = "/home/cano/situatedLearning/data/map-l.xml";
+		String jelly = "/home/cano/situatedLearning/data/map-jelly.xml";
+		String fileName = "/home/cano/situatedLearning/data/SingleSentence.xml";
 		
 		HashMap<String, MacMahonGraph> maps = new HashMap<String, MacMahonGraph>();
 		maps.put("Grid", MacMahonSingleInstructionFileReader.readMap(grid));

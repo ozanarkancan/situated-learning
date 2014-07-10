@@ -40,19 +40,19 @@ public class SVMBigramStateTrigramWordsActionFeatureFormatter extends SVMDiction
 				continue;
 			}
 			String[] words = Tokenizer.clean(line).toLowerCase().trim().split("\\s+");
-			ArrayList<String> bigram = new ArrayList<String>();
+			ArrayList<String> trigram = new ArrayList<String>();
 			
 			for(int i = 1; i <= 3; i++){
 				for(int j = 0; j <= words.length - i; j++){
 					String word = "";
 					for(int k = j; k < j + i; k++)
 						word += words[k];
-					if(!bigram.contains(word))
-						bigram.add(word);
+					if(!trigram.contains(word))
+						trigram.add(word);
 				}
 			}
-			String[] conversion = new String[bigram.size()];
-			conversion = bigram.toArray(conversion);
+			String[] conversion = new String[trigram.size()];
+			conversion = trigram.toArray(conversion);
 			String input = bagOfWords(conversion);
 			
 			line = reader.readLine();
@@ -76,8 +76,8 @@ public class SVMBigramStateTrigramWordsActionFeatureFormatter extends SVMDiction
 				input += Integer.toString(dictionary.size() + 1 + 2 * (stateInput.length - 1) + 8 + 1) + ":1 ";
 			
 			for(int i = 0; i < 4; i++){
-				String act = i == prevAction ? ":1 " : ":0 ";
-				input += Integer.toString(dictionary.size() + 1 + 2 * (stateInput.length - 1) + 8 + 2 + i) + act;
+				if(i == prevAction)
+					input += Integer.toString(dictionary.size() + 1 + 2 * (stateInput.length - 1) + 8 + 2 + i) + ":1 ";
 			}
 			
 			String output = reader.readLine().trim();
@@ -95,19 +95,19 @@ public class SVMBigramStateTrigramWordsActionFeatureFormatter extends SVMDiction
 	public String formatSingleInstance(String instruction, String environment) {
 		
 		String[] words = Tokenizer.clean(instruction).toLowerCase().trim().split("\\s+");
-		ArrayList<String> bigram = new ArrayList<String>();
+		ArrayList<String> trigram = new ArrayList<String>();
 		
 		for(int i = 1; i <= 3; i++){
 			for(int j = 0; j <= words.length - i; j++){
 				String word = "";
 				for(int k = j; k < j + i; k++)
 					word += words[k];
-				if(!bigram.contains(word))
-					bigram.add(word);
+				if(!trigram.contains(word))
+					trigram.add(word);
 			}
 		}
-		String[] conversion = new String[bigram.size()];
-		conversion = bigram.toArray(conversion);
+		String[] conversion = new String[trigram.size()];
+		conversion = trigram.toArray(conversion);
 		String formatted = bagOfWords(conversion);
 		
 		String[] stateInput = environment.split("\\s+");
@@ -127,11 +127,11 @@ public class SVMBigramStateTrigramWordsActionFeatureFormatter extends SVMDiction
 					+ Integer.parseInt(stateInput[prevStateForSingle.length - 1])) + ":1 ";
 		}
 		else
-			formatted += Integer.toString(dictionary.size() + 1 + 2 * (stateInput.length - 1) + 8 + 1) + ":1";
+			formatted += Integer.toString(dictionary.size() + 1 + 2 * (stateInput.length - 1) + 8 + 1) + ":1 ";
 		
 		for(int i = 0; i < 4; i++){
-			String act = i == previousAction ? ":1 " : ":0 ";
-			formatted += Integer.toString(dictionary.size() + 1 + 2 * (stateInput.length - 1) + 8 + 2 + i) + act;
+			if(i == previousAction)
+				formatted += Integer.toString(dictionary.size() + 1 + 2 * (stateInput.length - 1) + 8 + 2 + i) + ":1 ";
 		}
 		prevStateForSingle = stateInput;
 		

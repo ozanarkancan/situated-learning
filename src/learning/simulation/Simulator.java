@@ -56,20 +56,18 @@ public class Simulator {
 		String formatted;		
 		SVMClassifiable instance;
 		IndexedLabel prediction;
-		if(formatter instanceof SVMBigramStateTrigramWordsActionFeatureFormatter)
-			((SVMBigramStateTrigramWordsActionFeatureFormatter)formatter).previousAction = 0;
-		else if(formatter instanceof SVMBigramStateAndWordsActionFeatureFormatter)
-			((SVMBigramStateAndWordsActionFeatureFormatter)formatter).previousAction = 0;
 		do{
 			formatted = formatter.formatSingleInstance(instruction.instruction, 
 						map.stateOfNode(map.getNode(agent.getX(), agent.getY()), agent.getOrientation()));
 
 			instance = new SVMClassifiable(new SVMFormatInput(formatted), null);
 			prediction = (IndexedLabel) (classifier.classify(instance));
+			
 			if(formatter instanceof SVMBigramStateTrigramWordsActionFeatureFormatter)
 				((SVMBigramStateTrigramWordsActionFeatureFormatter)formatter).previousAction = prediction.label;
 			else if(formatter instanceof SVMBigramStateAndWordsActionFeatureFormatter)
 				((SVMBigramStateAndWordsActionFeatureFormatter)formatter).previousAction = prediction.label;
+			
 			actionCount++;
 			switch (prediction.label) {
 			case 0:
@@ -105,6 +103,11 @@ public class Simulator {
 		else if(formatter instanceof SVMBigramStateTrigramWordsActionFeatureFormatter)
 			((SVMBigramStateTrigramWordsActionFeatureFormatter)formatter).prevStateForSingle = map.stateOfNode(map.getNode(instruction.endX,
 					instruction.endY), instruction.endOrientation).split("\\s+");
+		
+		if(formatter instanceof SVMBigramStateTrigramWordsActionFeatureFormatter)
+			((SVMBigramStateTrigramWordsActionFeatureFormatter)formatter).previousAction = 0;
+		else if(formatter instanceof SVMBigramStateAndWordsActionFeatureFormatter)
+			((SVMBigramStateAndWordsActionFeatureFormatter)formatter).previousAction = 0;
 		return isTerminated;
 	}
 	
