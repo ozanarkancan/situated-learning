@@ -51,6 +51,8 @@ public class FeatureFormatterFactory {
 					formatter = new SVMBigramStateTrigramWordsFeatureFormatter(dictionary);
 				else if(contract.actionHistory == 1)
 					formatter = new SVMBigramStateTrigramWordsActionFeatureFormatter(dictionary);
+				else if(contract.actionHistory == 2)
+					formatter = new SVMBigramStateTrigramWordsAction2FeatureFormatter(dictionary);
 				else
 					throw new Exception("Unknown feature formatter");
 			}

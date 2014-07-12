@@ -34,6 +34,8 @@ public class ExperimentDemos {
 		//experiment26();
 		//experiment27();
 		//experiment28();
+		//experiment29();
+		experiment30();
 	}
 	
 	public static void experiment1(){
@@ -577,6 +579,50 @@ public class ExperimentDemos {
 		AbstractExperiment exp = ExperimentFactory.getInstance().getExperiment(experimentConfigFile);
 		
 		System.out.println("Experiment 28 is running");
+		exp.run();
+		exp = ExperimentFactory.getInstance().getExperiment(experimentConfigFile2);
+		exp.run();
+		exp = ExperimentFactory.getInstance().getExperiment(experimentConfigFile3);
+		exp.run();
+		System.out.println("Experiment has finished.");
+	}
+	
+	public static void experiment29(){
+		/*
+		 * Simulation
+		 * Classifier: SVM RBF kernel
+		 * Simulation
+		 * 
+		 * */
+		
+		String experimentConfigFile = "/home/cano/situatedLearning/experiments/macmahon_svmrbf_leaveone_mapout_trigram_action2_simulation/experimentConfigFile";
+		String experimentConfigFile2 = "/home/cano/situatedLearning/experiments/macmahon_svmrbf_leaveone_mapout_trigram_action2_simulation/experimentConfigFile2";
+		String experimentConfigFile3 = "/home/cano/situatedLearning/experiments/macmahon_svmrbf_leaveone_mapout_trigram_action2_simulation/experimentConfigFile3";
+		AbstractExperiment exp = ExperimentFactory.getInstance().getExperiment(experimentConfigFile);
+		
+		System.out.println("Experiment 29 is running");
+		exp.run();
+		exp = ExperimentFactory.getInstance().getExperiment(experimentConfigFile2);
+		exp.run();
+		exp = ExperimentFactory.getInstance().getExperiment(experimentConfigFile3);
+		exp.run();
+		System.out.println("Experiment has finished.");
+	}
+	
+	public static void experiment30(){
+		/*
+		 * Simulation
+		 * Classifier: SVM RBF kernel
+		 * Simulation
+		 * 
+		 * */
+		
+		String experimentConfigFile = "/home/cano/situatedLearning/experiments/macmahonZero_svmrbf_leaveone_mapout_trigram_action2_simulation/experimentConfigFile";
+		String experimentConfigFile2 = "/home/cano/situatedLearning/experiments/macmahonZero_svmrbf_leaveone_mapout_trigram_action2_simulation/experimentConfigFile2";
+		String experimentConfigFile3 = "/home/cano/situatedLearning/experiments/macmahonZero_svmrbf_leaveone_mapout_trigram_action2_simulation/experimentConfigFile3";
+		AbstractExperiment exp = ExperimentFactory.getInstance().getExperiment(experimentConfigFile);
+		
+		System.out.println("Experiment 30 is running");
 		exp.run();
 		exp = ExperimentFactory.getInstance().getExperiment(experimentConfigFile2);
 		exp.run();

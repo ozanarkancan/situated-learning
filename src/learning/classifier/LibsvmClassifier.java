@@ -21,7 +21,7 @@ public class LibsvmClassifier implements IClassifier{
 	public LibsvmClassifier(IFeatureFormatter formatter, ClassifierContract contract) {
 		this.formatter = formatter;
 		//-t, -d, -g, -p, -c
-		args = new String[8];
+		args = new String[9];
 		
 		if(contract.kernelType == 2){
 			args[0] = "-d";
@@ -37,6 +37,7 @@ public class LibsvmClassifier implements IClassifier{
 		args[5] = Double.toString(contract.C);
 		args[6] = "-p";
 		args[7] = Double.toString(contract.epsilon);
+		args[8] = "-q";
 	}
 	
 	@Override

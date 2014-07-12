@@ -8,13 +8,13 @@ public class MacMahonSingleInstructionFileReaderDemo {
 
 	public static void main(String[] args) {
 		//testReadMap();
-		testConvertInstructions();
+		//testConvertInstructions();
 		//testRawText();
-		//testSplitFile();
+		testSplitFile();
 	}
 	
 	public static void testSplitFile(){
-		String fileName = "/home/cano/situatedLearning/data/SingleSentence.xml";
+		String fileName = "/home/cano/situatedLearning/data/zeroInitial/SingleSentenceZeroInitial.xml";
 		MacMahonSingleInstructionFileReader.splitInstructionToRelatedMap(fileName);
 	}
 	
@@ -27,7 +27,7 @@ public class MacMahonSingleInstructionFileReaderDemo {
 		String grid = "/home/cano/situatedLearning/data/map-grid.xml";
 		String l = "/home/cano/situatedLearning/data/map-l.xml";
 		String jelly = "/home/cano/situatedLearning/data/map-jelly.xml";
-		String fileName = "/home/cano/situatedLearning/data/InstructionsForGridSearch.xml";
+		String fileName = "/home/cano/situatedLearning/data/zeroInitial/SingleSentenceZeroInitial.xml";
 		
 		HashMap<String, MacMahonGraph> maps = new HashMap<String, MacMahonGraph>();
 		maps.put("Grid", MacMahonSingleInstructionFileReader.readMap(grid));

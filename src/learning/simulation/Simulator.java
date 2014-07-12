@@ -7,6 +7,7 @@ import learning.classifier.IClassifier;
 import learning.feature.IFeatureFormatter;
 import learning.feature.SVMBigramStateAndWordsActionFeatureFormatter;
 import learning.feature.SVMBigramStateAndWordsFeatureFormatter;
+import learning.feature.SVMBigramStateTrigramWordsAction2FeatureFormatter;
 import learning.feature.SVMBigramStateTrigramWordsActionFeatureFormatter;
 import learning.feature.SVMBigramStateTrigramWordsFeatureFormatter;
 import learning.instance.IndexedLabel;
@@ -67,6 +68,8 @@ public class Simulator {
 				((SVMBigramStateTrigramWordsActionFeatureFormatter)formatter).previousAction = prediction.label;
 			else if(formatter instanceof SVMBigramStateAndWordsActionFeatureFormatter)
 				((SVMBigramStateAndWordsActionFeatureFormatter)formatter).previousAction = prediction.label;
+			else if(formatter instanceof SVMBigramStateTrigramWordsAction2FeatureFormatter)
+				((SVMBigramStateTrigramWordsAction2FeatureFormatter)formatter).previousAction = prediction.label;
 			
 			actionCount++;
 			switch (prediction.label) {
@@ -103,11 +106,18 @@ public class Simulator {
 		else if(formatter instanceof SVMBigramStateTrigramWordsActionFeatureFormatter)
 			((SVMBigramStateTrigramWordsActionFeatureFormatter)formatter).prevStateForSingle = map.stateOfNode(map.getNode(instruction.endX,
 					instruction.endY), instruction.endOrientation).split("\\s+");
+		else if(formatter instanceof SVMBigramStateTrigramWordsAction2FeatureFormatter)
+			((SVMBigramStateTrigramWordsAction2FeatureFormatter)formatter).prevStateForSingle = map.stateOfNode(map.getNode(instruction.endX,
+					instruction.endY), instruction.endOrientation).split("\\s+");
 		
 		if(formatter instanceof SVMBigramStateTrigramWordsActionFeatureFormatter)
 			((SVMBigramStateTrigramWordsActionFeatureFormatter)formatter).previousAction = 0;
 		else if(formatter instanceof SVMBigramStateAndWordsActionFeatureFormatter)
 			((SVMBigramStateAndWordsActionFeatureFormatter)formatter).previousAction = 0;
+		else if(formatter instanceof SVMBigramStateTrigramWordsAction2FeatureFormatter){
+			((SVMBigramStateTrigramWordsAction2FeatureFormatter)formatter).previousAction = 0;
+			((SVMBigramStateTrigramWordsAction2FeatureFormatter)formatter).previousAction2 = 0;
+		}
 		return isTerminated;
 	}
 	
